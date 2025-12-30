@@ -12,4 +12,7 @@
     <string name="bing_trend_source">Bing Trends</string>
     <string name="newspaper_source">Newspaper</string>
     <string name="start_description">Start</string>
+    <string name="login_description">Login</string>
+    <string name="logout_description">Logout</string>
+    <string name="welcome_description">Microsoft Autosearcher</string>
 </resources>
