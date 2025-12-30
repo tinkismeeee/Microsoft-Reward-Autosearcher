@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Reward Autosearcher</string>
+    <string name="search_hint">Enter number of searches</string>
+    <string name="delay_hint">Enter delay between searches</string>
+    <string name="search_text">Search Count</string>
+    <string name="delay_text">Delay (second)</string>
+    <string name="keep_screen_on_description">Keep screen on during search</string>
+    <string name="query_description">Query source:</string>
+    <string name="reddit_source">Reddit</string>
+    <string name="wikipedia_source">Wikipedia</string>
+    <string name="google_trend_source">Google Trends</string>
+    <string name="bing_trend_source">Bing Trends</string>
+    <string name="newspaper_source">Newspaper</string>
+    <string name="start_description">Start</string>
 </resources>
