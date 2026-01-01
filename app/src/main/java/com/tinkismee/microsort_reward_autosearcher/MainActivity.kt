@@ -15,6 +15,11 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
+import kotlinx.serialization.decodeFromString
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
 
 class MainActivity : AppCompatActivity() {
     private lateinit var searchInput : TextInputEditText
@@ -29,6 +34,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var wikipediaSourceBtn : CheckBox
     private lateinit var newspaperSourceBtn : CheckBox
     private lateinit var queries : List<String>
+    private var searchCount : Int = 0
+    private lateinit var chromeVersion : List<String>
+    private lateinit var userAgent : String
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,12 +61,12 @@ class MainActivity : AppCompatActivity() {
 
         initVars()
         listeners()
-
-
-        fetchLocalQueries()
+        getChromeVersion()
     }
 
     private fun initVars() {
+        userAgent = ""
+        chromeVersion = listOf()
         queries = listOf()
         searchInput = findViewById(R.id.searchInput)
         delayInput = findViewById(R.id.delayInput)
@@ -78,24 +87,33 @@ class MainActivity : AppCompatActivity() {
         logoutBtn.setOnClickListener {
             webView.loadUrl("https://rewards.bing.com/Signout")
         }
-
+        startBtn.setOnClickListener {
+            if (searchInput.text.toString().isNullOrEmpty()) {
+                Toast.makeText(this, "Please enter valid number of searches", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            searchCount = searchInput.text.toString().toInt()
+            fetchLocalQueries()
+        }
     }
 
     private fun fetchReddit() {
 
     }
-
     private fun fetchLocalQueries() {
-        val allQueries = readLocalQueries()
+        var allQueries = readLocalQueries()
         if (allQueries.isEmpty()) {
             Log.i("DEBUG", "No local queries found")
             Toast.makeText(this, "No local queries found or can't read them", Toast.LENGTH_SHORT).show()
             return
         }
-        queries = allQueries
+        allQueries = allQueries.shuffled()
+        // Log.i("DEBUG", allQueries.toString())
+        queries = allQueries.take(searchCount)
+        // Log.i("DEBUG", "number of queries: ${queries.size}")
     }
 
-    fun readLocalQueries(): List<String> {
+    private fun readLocalQueries(): List<String> {
         var allQueries : List<String> = listOf()
         try {
             val inputStream = assets.open("queries.json")
@@ -108,4 +126,49 @@ class MainActivity : AppCompatActivity() {
         }
         return allQueries
     }
+
+    private fun getRandomUserAgent(versions : List<String>) {
+        if (versions.isEmpty()) {
+            // default user-agent
+            userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+        }
+        var systemComponent = "Windows NT 10.0; Win64; x64"
+        chromeVersion = chromeVersion.shuffled()
+        var chromeMajorVersion = chromeVersion[0].split('.')[0]
+        var chromeReducedVersion = chromeMajorVersion + ".0.0.0"
+        userAgent = "Mozilla/5.0 ($systemComponent) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$chromeReducedVersion Safari/537.36"
+        Log.i("DEBUG", userAgent)
+
+
+
+
+    }
+
+    private fun getChromeVersion() {
+        try {
+            RetrofitClient_getChromeVersion.instance.getChromeVersion("application/json")
+                .enqueue(object : Callback<ChromeVersionResponse> {
+                    override fun onResponse(call: Call<ChromeVersionResponse>, response: Response<ChromeVersionResponse>) {
+                        if (response.isSuccessful) {
+                            val chromeVersionResponse = response.body()
+                            // get chrome version from response
+                            chromeVersion = chromeVersionResponse!!.channels.values.map {it.version}
+                            Log.i("DEBUG", chromeVersion.toString())
+                            getRandomUserAgent(chromeVersion)
+                        }
+                        else {
+                            Log.i("DEBUG", "Failed to get chrome version")
+                        }
+                    }
+                    override fun onFailure(call: Call<ChromeVersionResponse>, t: Throwable) {
+                        Log.i("DEBUG", t.message.toString())
+                    }
+                })
+        } catch (e: Exception) {
+            Log.i("DEBUG", e.message.toString())
+        }
+    }
+
+
+
 }

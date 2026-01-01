@@ -135,7 +135,6 @@
       "New York time"
     ]
   },
-
   {
     "title": "Maisons près de chez vous",
     "queries": [
@@ -284,6 +283,166 @@
     "queries": [
       "Augmentation Impots",
       "Mort célébrité"
+    ]
+  },
+  {
+    "title": "Explore new recipes",
+    "queries": [
+      "Easy pancake recipe",
+      "Best chocolate cake recipe",
+      "How to make pho"
+    ]
+  },
+  {
+    "title": "Track your fitness",
+    "queries": [
+      "Steps today",
+      "Calories burned walking",
+      "Heart rate monitor"
+    ]
+  },
+  {
+    "title": "Learn a new language",
+    "queries": [
+      "Learn Spanish online",
+      "Best French learning app",
+      "Japanese grammar basics"
+    ]
+  },
+  {
+    "title": "Check the news",
+    "queries": [
+      "Breaking news",
+      "World news headlines",
+      "Tech news today"
+    ]
+  },
+  {
+    "title": "Sports updates",
+    "queries": [
+      "NBA scores",
+      "Premier League results",
+      "Olympics medal count"
+    ]
+  },
+  {
+    "title": "Finance & Stocks",
+    "queries": [
+      "Bitcoin price",
+      "Ethereum news",
+      "Stock market today"
+    ]
+  },
+  {
+    "title": "Weather updates",
+    "queries": [
+      "Weather in London",
+      "Rain forecast Tokyo",
+      "Snow in New York"
+    ]
+  },
+  {
+    "title": "Movie suggestions",
+    "queries": [
+      "Top movies 2025",
+      "Oscar winners",
+      "Best sci-fi movies"
+    ]
+  },
+  {
+    "title": "Music discovery",
+    "queries": [
+      "Top songs 2025",
+      "New albums this week",
+      "Best jazz playlists"
+    ]
+  },
+  {
+    "title": "Travel planning",
+    "queries": [
+      "Visa requirements Japan",
+      "Travel insurance tips",
+      "Packing list for Europe"
+    ]
+  },
+  {
+    "title": "Shopping deals",
+    "queries": [
+      "Black Friday deals",
+      "Best laptop under $1000",
+      "Discount codes Amazon"
+    ]
+  },
+  {
+    "title": "Health & wellness",
+    "queries": [
+      "Meditation techniques",
+      "Yoga for beginners",
+      "Healthy breakfast ideas"
+    ]
+  },
+  {
+    "title": "Tech help",
+    "queries": [
+      "How to reset iPhone",
+      "Fix WiFi issues",
+      "Best antivirus 2025"
+    ]
+  },
+  {
+    "title": "Education & learning",
+    "queries": [
+      "Free online courses",
+      "Learn coding Python",
+      "Study tips for exams"
+    ]
+  },
+  {
+    "title": "Pet care",
+    "queries": [
+      "Dog food brands",
+      "Cat grooming tips",
+      "Vet near me"
+    ]
+  },
+  {
+    "title": "Home improvement",
+    "queries": [
+      "Paint color ideas",
+      "Fix leaky faucet",
+      "Smart home devices"
+    ]
+  },
+  {
+    "title": "Finance tools",
+    "queries": [
+      "Budget calculator",
+      "Loan repayment schedule",
+      "Credit score check"
+    ]
+  },
+  {
+    "title": "Event planning",
+    "queries": [
+      "Birthday party ideas",
+      "Wedding checklist",
+      "Event venues near me"
+    ]
+  },
+  {
+    "title": "Transportation",
+    "queries": [
+      "Bus schedule",
+      "Train times",
+      "Taxi near me"
+    ]
+  },
+  {
+    "title": "Local services",
+    "queries": [
+      "Plumber near me",
+      "Electrician reviews",
+      "Cleaning service nearby"
     ]
   }
 ]

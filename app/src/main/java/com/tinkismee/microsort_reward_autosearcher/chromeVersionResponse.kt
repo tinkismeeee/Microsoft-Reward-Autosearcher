@@ -1,0 +1,43 @@
+package com.tinkismee.microsort_reward_autosearcher
+
+import kotlinx.serialization.Serializable
+@Serializable
+data class ChromeVersionResponse(
+    val timestamp: String,
+    val channels: Map<String, ChannelInfo>
+)
+
+@Serializable
+data class ChannelInfo(
+    val channel: String,
+    val version: String,
+    val revision: String
+)
+
+/*
+{
+  "timestamp": "2025-12-31T10:10:02.427Z",
+  "channels": {
+    "Stable": {
+      "channel": "Stable",
+      "version": "143.0.7499.169",
+      "revision": "1536371"
+    },
+    "Beta": {
+      "channel": "Beta",
+      "version": "144.0.7559.31",
+      "revision": "1552494"
+    },
+    "Dev": {
+      "channel": "Dev",
+      "version": "145.0.7572.2",
+      "revision": "1556498"
+    },
+    "Canary": {
+      "channel": "Canary",
+      "version": "145.0.7610.0",
+      "revision": "1563563"
+    }
+  }
+}
+*/
