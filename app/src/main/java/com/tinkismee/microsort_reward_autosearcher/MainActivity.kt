@@ -25,6 +25,7 @@ import org.json.JSONObject
 import java.io.IOException
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.json.JSONArray
 
 class MainActivity : AppCompatActivity() {
     private lateinit var searchInput : TextInputEditText
@@ -41,7 +42,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var local_queries : List<String>
     private var searchCount : Int = 0
     private lateinit var userAgent : String
-    private lateinit var fetched_queries : List<String>
+    private lateinit var fetched_queries_Reddit : List<String>
+    private lateinit var fetched_queries_GoogleTrends : List<String>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,11 +69,13 @@ class MainActivity : AppCompatActivity() {
         initVars()
         listeners()
         fetchReddit()
+        fetchGoogleTrend()
     }
 
     private fun initVars() {
         userAgent = ""
-        fetched_queries = listOf()
+        fetched_queries_Reddit = listOf()
+        fetched_queries_GoogleTrends = listOf()
         local_queries = listOf()
         searchInput = findViewById(R.id.searchInput)
         delayInput = findViewById(R.id.delayInput)
@@ -102,10 +106,70 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun fetchGoogleTrend() {
+        getRandomUserAgent { user_Agent ->
+            Log.d("DEBUG GOOGLE TREND", "Proceeding with User-Agent: $user_Agent")
+            val GeoLocation = listOf("VN","US","GE", "FR", "ES", "IT", "PT", "BR", "RO")
+            val randomGeoLocation = GeoLocation.shuffled()[0]
+            val client = OkHttpClient()
+            val formBody = FormBody.Builder()
+                .add("f.req", "[[[\"i0OFE\",\"[null,null,\\\"${randomGeoLocation}\\\",0,null,${(10..15).random()}]\"]]]")
+                .build()
+            val request = Request.Builder()
+                .url("https://trends.google.com/_/TrendsUi/data/batchexecute")
+                .post(formBody)
+                .header("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
+                .header("Origin", "https://trends.google.com")
+                .header("Referer", "https://trends.google.com/trends/")
+                .header("User-Agent", user_Agent)
+                .header("Accept", "/")
+                .build()
+            client.newCall(request).enqueue(object : okhttp3.Callback {
+                override fun onFailure(call: okhttp3.Call, e: IOException) {
+                    Log.e("DEBUG GOOGLE TREND", "Request failed", e)
+                    Toast.makeText(this@MainActivity, "Fetching data from Google Trends failed!", Toast.LENGTH_SHORT).show()
+                }
+                override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                    response.body()?.use { responseBody ->
+                        if (response.isSuccessful) {
+                            val body = responseBody.string()
+                            val pattern = Regex(",\\d+\\]\\]$")
+//                            val matchResult = pattern.find(body)
+//                            if (matchResult != null) {
+//                                val matchedString = matchResult.value
+//                            }
+                            val data = body.replace(")]}'", "").trimStart()
+                            val rootArray = JSONArray(data)
+                            val innerArray = JSONArray(rootArray.getJSONArray(0).getString(2))
+                            val suggestions = mutableListOf<String>()
+                            val suggestionArray = innerArray.getJSONArray(1)
+                            for (i in 0 until suggestionArray.length()) {
+                                val item = suggestionArray.getJSONArray(i)
+                                val keyword = item.getString(0)
+                                suggestions.add(keyword)
+                            }
+                            if (suggestions.isNotEmpty()) {
+                                val temp = suggestions.shuffled().take(10)
+                                fetched_queries_GoogleTrends = fetched_queries_GoogleTrends + temp
+                                // Log.i("DEBUG GOOGLE TREND", "${fetched_queries_GoogleTrends}")
+                                Log.i("DEBUG GOOGLE TREND", "Fetched data from Google Trends successfully!")
+                            }
+                            else {
+                                Log.i("DEBUG GOOGLE TREND", "Unknows errors occurred!")
+                            }
+                        }
+                        else {
+                            Log.e("DEBUG GOOGLE TREND", "HTTP ${response.code()}: ${response.message()}")
+                        }
+                    }
+                }
+            })
+        }
+    }
     private fun fetchReddit() {
         getRandomUserAgent { user_Agent ->
             Log.d("DEBUG REDDIT", "Proceeding with User-Agent: $user_Agent")
-            val subReddits = listOf("news", "worldnews", "todayilearned", "askreddit", "technology")
+            val subReddits = listOf("news", "worldnews", "todayilearned", "askreddit", "technology", "medical")
             val randomSubreddit = subReddits.random()
             val request = Request.Builder()
                 .url("https://www.reddit.com/r/$randomSubreddit/hot.json?limit=${(10..15).random()}")
@@ -115,19 +179,26 @@ class MainActivity : AppCompatActivity() {
             client.newCall(request).enqueue(object : okhttp3.Callback {
                 override fun onFailure(call: okhttp3.Call, e: IOException) {
                     Log.e("DEBUG REDDIT", "Request failed", e)
+                    Toast.makeText(this@MainActivity, "Fetching data from Reddit failed!", Toast.LENGTH_SHORT).show()
                 }
                 override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
                     response.body()?.use { responseBody ->
                         if (response.isSuccessful) {
                             val body = responseBody.string()
-                            Log.d("DEBUG REDDIT", "Response body: ${body.take(500)}")
+                            // Log.d("DEBUG REDDIT", "Response body: ${body.take(500)}")
                             val json = JSONObject(body)
                             val array_size = json.getJSONObject("data").getJSONArray("children").length()
-                            for (i in 0 until array_size) {
-                                val title = json.getJSONObject("data").getJSONArray("children").getJSONObject(i).getJSONObject("data").getString("title")
-                                fetched_queries = fetched_queries + title
+                            if (array_size > 0) {
+                                Log.i("DEBUG REDDIT", "Fetched data from Reddit successfully!")
+                                for (i in 0 until array_size) {
+                                    val title = json.getJSONObject("data").getJSONArray("children").getJSONObject(i).getJSONObject("data").getString("title")
+                                    fetched_queries_Reddit = fetched_queries_Reddit + title
+                                }
+                                // Log.i("DEBUG REDDIT", "${fetched_queries_Reddit}")
                             }
-                            Log.i("DEBUG REDDIT", "Fetched ${fetched_queries.size} queries")
+                            else {
+                                Log.i("DEBUG REDDIT", "Unknows errors occurred!")
+                            }
                         } else {
                             Log.e("DEBUG REDDIT", "HTTP ${response.code()}: ${response.message()}")
                         }
@@ -172,12 +243,13 @@ class MainActivity : AppCompatActivity() {
                         if (response.isSuccessful) {
                             val chromeVersionResponse = response.body()
                             val chromeVersions = chromeVersionResponse!!.channels.values.map { it.version }
-                            val systemComponent = "Windows NT 10.0; Win64; x64"
+                            val androidVersion = (10..14).random()
+                            val systemComponent = "Linux; Android ${androidVersion}; K"
                             val shuffledVersions = chromeVersions.shuffled()
                             val chromeMajorVersion = shuffledVersions[0].split('.')[0]
                             val chromeReducedVersion = "$chromeMajorVersion.0.0.0"
                             finalUserAgent = "Mozilla/5.0 ($systemComponent) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$chromeReducedVersion Safari/537.36"
-                            Log.i("DEBUG", "User agent fetched: $finalUserAgent")
+//                            Log.i("DEBUG", "User agent fetched: $finalUserAgent")
                         } else {
                             Log.w("DEBUG", "Failed to get chrome version, using default.")
                             // Default user-agent
