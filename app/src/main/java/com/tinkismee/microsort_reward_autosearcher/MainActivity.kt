@@ -38,9 +38,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var googleTrendSourceBtn : CheckBox
     private lateinit var wikipediaSourceBtn : CheckBox
     private lateinit var newspaperSourceBtn : CheckBox
-    private lateinit var queries : List<String>
+    private lateinit var local_queries : List<String>
     private var searchCount : Int = 0
     private lateinit var userAgent : String
+    private lateinit var fetched_queries : List<String>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +71,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun initVars() {
         userAgent = ""
-        queries = listOf()
+        fetched_queries = listOf()
+        local_queries = listOf()
         searchInput = findViewById(R.id.searchInput)
         delayInput = findViewById(R.id.delayInput)
         loginBtn = findViewById(R.id.loginBtn)
@@ -119,6 +121,13 @@ class MainActivity : AppCompatActivity() {
                         if (response.isSuccessful) {
                             val body = responseBody.string()
                             Log.d("DEBUG REDDIT", "Response body: ${body.take(500)}")
+                            val json = JSONObject(body)
+                            val array_size = json.getJSONObject("data").getJSONArray("children").length()
+                            for (i in 0 until array_size) {
+                                val title = json.getJSONObject("data").getJSONArray("children").getJSONObject(i).getJSONObject("data").getString("title")
+                                fetched_queries = fetched_queries + title
+                            }
+                            Log.i("DEBUG REDDIT", "Fetched ${fetched_queries.size} queries")
                         } else {
                             Log.e("DEBUG REDDIT", "HTTP ${response.code()}: ${response.message()}")
                         }
@@ -136,7 +145,7 @@ class MainActivity : AppCompatActivity() {
         }
         allQueries = allQueries.shuffled()
         Log.i("DEBUG", allQueries.toString())
-        queries = allQueries.take(searchCount)
+        local_queries = allQueries.take(searchCount)
         // Log.i("DEBUG", "number of queries: ${queries.size}")
     }
 
