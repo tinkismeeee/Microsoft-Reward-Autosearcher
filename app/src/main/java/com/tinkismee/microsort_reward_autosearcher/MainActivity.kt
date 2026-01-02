@@ -101,7 +101,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchReddit() {
-        
+        getRandomUserAgent { user_Agent ->
+            Log.d("DEBUG REDDIT", "Proceeding with User-Agent: $user_Agent")
+            val subReddits = listOf("news", "worldnews", "todayilearned", "askreddit", "technology")
+            val randomSubreddit = subReddits.random()
+            val request = Request.Builder()
+                .url("https://www.reddit.com/r/$randomSubreddit/hot.json?limit=${(10..15).random()}")
+                .header("User-Agent", user_Agent)
+                .build()
+            val client = OkHttpClient()
+            client.newCall(request).enqueue(object : okhttp3.Callback {
+                override fun onFailure(call: okhttp3.Call, e: IOException) {
+                    Log.e("DEBUG REDDIT", "Request failed", e)
+                }
+                override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                    response.body()?.use { responseBody ->
+                        if (response.isSuccessful) {
+                            val body = responseBody.string()
+                            Log.d("DEBUG REDDIT", "Response body: ${body.take(500)}")
+                        } else {
+                            Log.e("DEBUG REDDIT", "HTTP ${response.code()}: ${response.message()}")
+                        }
+                    }
+                }
+            })
+        }
     }
     private fun fetchLocalQueries() {
         var allQueries = readLocalQueries()
