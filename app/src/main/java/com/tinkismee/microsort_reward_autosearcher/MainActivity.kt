@@ -20,6 +20,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
+import okhttp3.*
+import org.json.JSONObject
+import java.io.IOException
+import okhttp3.OkHttpClient
+import okhttp3.Request
 
 class MainActivity : AppCompatActivity() {
     private lateinit var searchInput : TextInputEditText
@@ -35,7 +40,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var newspaperSourceBtn : CheckBox
     private lateinit var queries : List<String>
     private var searchCount : Int = 0
-    private lateinit var chromeVersion : List<String>
     private lateinit var userAgent : String
 
 
@@ -61,12 +65,11 @@ class MainActivity : AppCompatActivity() {
 
         initVars()
         listeners()
-        getChromeVersion()
+        fetchReddit()
     }
 
     private fun initVars() {
         userAgent = ""
-        chromeVersion = listOf()
         queries = listOf()
         searchInput = findViewById(R.id.searchInput)
         delayInput = findViewById(R.id.delayInput)
@@ -98,7 +101,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchReddit() {
-
+        
     }
     private fun fetchLocalQueries() {
         var allQueries = readLocalQueries()
@@ -108,7 +111,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
         allQueries = allQueries.shuffled()
-        // Log.i("DEBUG", allQueries.toString())
+        Log.i("DEBUG", allQueries.toString())
         queries = allQueries.take(searchCount)
         // Log.i("DEBUG", "number of queries: ${queries.size}")
     }
@@ -127,48 +130,40 @@ class MainActivity : AppCompatActivity() {
         return allQueries
     }
 
-    private fun getRandomUserAgent(versions : List<String>) {
-        if (versions.isEmpty()) {
-            // default user-agent
-            userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
-        }
-        var systemComponent = "Windows NT 10.0; Win64; x64"
-        chromeVersion = chromeVersion.shuffled()
-        var chromeMajorVersion = chromeVersion[0].split('.')[0]
-        var chromeReducedVersion = chromeMajorVersion + ".0.0.0"
-        userAgent = "Mozilla/5.0 ($systemComponent) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$chromeReducedVersion Safari/537.36"
-        Log.i("DEBUG", userAgent)
-
-
-
-
-    }
-
-    private fun getChromeVersion() {
+    private fun getRandomUserAgent(onUserAgentReady: (String) -> Unit){
         try {
             RetrofitClient_getChromeVersion.instance.getChromeVersion("application/json")
-                .enqueue(object : Callback<ChromeVersionResponse> {
-                    override fun onResponse(call: Call<ChromeVersionResponse>, response: Response<ChromeVersionResponse>) {
+                .enqueue(object : retrofit2.Callback<ChromeVersionResponse> {
+                    override fun onResponse(call: retrofit2.Call<ChromeVersionResponse>, response: retrofit2.Response<ChromeVersionResponse>) {
+                        val finalUserAgent: String
                         if (response.isSuccessful) {
                             val chromeVersionResponse = response.body()
-                            // get chrome version from response
-                            chromeVersion = chromeVersionResponse!!.channels.values.map {it.version}
-                            Log.i("DEBUG", chromeVersion.toString())
-                            getRandomUserAgent(chromeVersion)
+                            val chromeVersions = chromeVersionResponse!!.channels.values.map { it.version }
+                            val systemComponent = "Windows NT 10.0; Win64; x64"
+                            val shuffledVersions = chromeVersions.shuffled()
+                            val chromeMajorVersion = shuffledVersions[0].split('.')[0]
+                            val chromeReducedVersion = "$chromeMajorVersion.0.0.0"
+                            finalUserAgent = "Mozilla/5.0 ($systemComponent) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$chromeReducedVersion Safari/537.36"
+                            Log.i("DEBUG", "User agent fetched: $finalUserAgent")
+                        } else {
+                            Log.w("DEBUG", "Failed to get chrome version, using default.")
+                            // Default user-agent
+                            finalUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
                         }
-                        else {
-                            Log.i("DEBUG", "Failed to get chrome version")
-                        }
+                        onUserAgentReady(finalUserAgent)
                     }
                     override fun onFailure(call: Call<ChromeVersionResponse>, t: Throwable) {
-                        Log.i("DEBUG", t.message.toString())
+                        Log.e("DEBUG", "Failed to get chrome version on failure: ${t.message}", t)
+                        // Default user-agent
+                        val defaultUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+                        onUserAgentReady(defaultUserAgent)
                     }
                 })
         } catch (e: Exception) {
-            Log.i("DEBUG", e.message.toString())
+            Log.e("DEBUG", "Exception in getRandomUserAgent: ${e.message}", e)
+            val defaultUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            onUserAgentReady(defaultUserAgent)
         }
     }
-
-
 
 }
