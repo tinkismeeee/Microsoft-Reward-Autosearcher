@@ -75,16 +75,10 @@ class MainActivity : AppCompatActivity() {
         webView.loadUrl("https://www.bing.com")
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
-                if (
-                    isRunning &&
-                    waitingForSearch &&
-                    currentIndex < finalQueries.size &&
-                    url?.contains("bing.com") == true
-                ) {
+                if (isRunning && waitingForSearch && currentIndex < finalQueries.size && url?.contains("bing.com") == true) {
                     waitingForSearch = false
                     searchLikeRealUser(finalQueries[currentIndex])
                     currentIndex++
-
                     handler.postDelayed(
                         { startAutoSearch() },
                         delayCount * 1000L
@@ -135,18 +129,16 @@ class MainActivity : AppCompatActivity() {
             if (isRunning) {
                 isRunning = false
                 handler.removeCallbacks(searchRunnable)
-                Toast.makeText(this, "Auto search stopped", Toast.LENGTH_SHORT).show()
+                startBtn.text = "Start"
+                Toast.makeText(this, "Auto searching has been stopped", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
             if (searchInput.text.toString().isEmpty() || delayInput.text.toString().isEmpty()) {
                 Toast.makeText(this, "Please enter valid number of searches or delay", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
             searchCount = searchInput.text.toString().toInt()
             delayCount = delayInput.text.toString().toInt()
-
             if (searchCount <= 0 || delayCount <= 0) {
                 Toast.makeText(this, "Please enter valid number of searches or delay", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -157,12 +149,13 @@ class MainActivity : AppCompatActivity() {
             if (wikipediaSourceBtn.isChecked) finalQueries = finalQueries + fetched_queries_Wikipedia
             if (newspaperSourceBtn.isChecked) finalQueries = finalQueries + fetched_queries_Newspaper
             if (finalQueries.isEmpty()) {
-                Toast.makeText(this, "Please select at least one data source", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+                Toast.makeText(this, "No queries selected, fallback to local queries", Toast.LENGTH_LONG).show()
+                finalQueries = finalQueries + local_queries
             }
             finalQueries = finalQueries.map { it.lowercase() }.distinct().shuffled().take(searchCount)
             currentIndex = 0
             isRunning = true
+            startBtn.text = "Stop"
             handler.post(searchRunnable)
         }
 
@@ -176,7 +169,6 @@ class MainActivity : AppCompatActivity() {
         val safe = query
             .replace("\\", "\\\\")
             .replace("'", "\\'")
-
         val js = """
         (function () {
             function waitInput(retry) {
@@ -220,6 +212,7 @@ class MainActivity : AppCompatActivity() {
         if (currentIndex >= finalQueries.size) {
             isRunning = false
             currentIndex = 0
+            startBtn.text = "Start"
             return
         }
         waitingForSearch = true
@@ -417,7 +410,7 @@ class MainActivity : AppCompatActivity() {
         }
         Log.i("DEBUG LOCAL QUERIES", "Fetched data from local queries successfully!")
         allQueries = allQueries.shuffled()
-        local_queries = allQueries.take(searchCount)
+        local_queries = allQueries
         // Log.i("DEBUG LOCAL QUERIES", "${allQueries}")
     }
 
@@ -430,7 +423,7 @@ class MainActivity : AppCompatActivity() {
             allQueries = categories.flatMap { it.queries }
         }
         catch (e: Exception) {
-                Log.e("DEBUG", "Failed to read local queries", e)
+            Log.e("DEBUG", "Failed to read local queries", e)
         }
         return allQueries
     }
