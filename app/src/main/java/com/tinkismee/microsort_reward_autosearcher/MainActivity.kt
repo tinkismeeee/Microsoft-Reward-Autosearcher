@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var userAgent : String
     private lateinit var fetched_queries_Reddit : List<String>
     private lateinit var fetched_queries_GoogleTrends : List<String>
+    private lateinit var fetched_queries_Wikipedia : List<String>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,10 +71,13 @@ class MainActivity : AppCompatActivity() {
         listeners()
         fetchReddit()
         fetchGoogleTrend()
+        fetchLocalQueries()
+        fetchWikipedia()
     }
 
     private fun initVars() {
         userAgent = ""
+        fetched_queries_Wikipedia = listOf()
         fetched_queries_Reddit = listOf()
         fetched_queries_GoogleTrends = listOf()
         local_queries = listOf()
@@ -106,6 +110,42 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun fetchWikipedia() {
+        getRandomUserAgent { user_Agent ->
+            Log.d("DEBUG WIKIPEDIA", "Proceeding with User-Agent: $user_Agent")
+            val client = OkHttpClient()
+            val request = Request.Builder()
+                .header("Accept", "application/json")
+                .header("User-Agent", user_Agent)
+                .url("https://vi.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=15&format=json")
+                .build()
+            client.newCall(request).enqueue(object : okhttp3.Callback {
+                override fun onFailure(call: okhttp3.Call, e: IOException) {
+                    Log.e("DEBUG WIKIPEDIA", "Request failed", e)
+                }
+                override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                    response.body()?.use { responseBody ->
+                        if (response.isSuccessful) {
+                            val body = responseBody.string()
+                            val json = JSONObject(body)
+                            val arraySize = json.getJSONObject("query").getJSONArray("random").length()
+                            if (arraySize > 0) {
+                                Log.i("DEBUG WIKIPEDIA", "Fetched data from Wikipedia successfully!")
+                                for (i in 0 until arraySize) {
+                                    val title = json.getJSONObject("query").getJSONArray("random").getJSONObject(i).getString("title")
+                                    fetched_queries_Wikipedia = fetched_queries_Wikipedia + title
+                                }
+                                // Log.i("DEBUG WIKIPEDIA", "${fetched_queries_Wikipedia}")
+                            }
+                            else {
+                                Log.i("DEBUG WIKIPEDIA", "Unknows errors occurred!")
+                            }
+                        }
+                    }
+                }
+            })
+        }
+    }
     private fun fetchGoogleTrend() {
         getRandomUserAgent { user_Agent ->
             Log.d("DEBUG GOOGLE TREND", "Proceeding with User-Agent: $user_Agent")
@@ -113,7 +153,7 @@ class MainActivity : AppCompatActivity() {
             val randomGeoLocation = GeoLocation.shuffled()[0]
             val client = OkHttpClient()
             val formBody = FormBody.Builder()
-                .add("f.req", "[[[\"i0OFE\",\"[null,null,\\\"${randomGeoLocation}\\\",0,null,${(10..15).random()}]\"]]]")
+                .add("f.req", "[[[\"i0OFE\",\"[null,null,\\\"${randomGeoLocation}\\\",0,null,${(20..48).random()}]\"]]]")
                 .build()
             val request = Request.Builder()
                 .url("https://trends.google.com/_/TrendsUi/data/batchexecute")
@@ -149,7 +189,7 @@ class MainActivity : AppCompatActivity() {
                                 suggestions.add(keyword)
                             }
                             if (suggestions.isNotEmpty()) {
-                                val temp = suggestions.shuffled().take(10)
+                                val temp = suggestions.shuffled().take(15)
                                 fetched_queries_GoogleTrends = fetched_queries_GoogleTrends + temp
                                 // Log.i("DEBUG GOOGLE TREND", "${fetched_queries_GoogleTrends}")
                                 Log.i("DEBUG GOOGLE TREND", "Fetched data from Google Trends successfully!")
@@ -214,10 +254,10 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "No local queries found or can't read them", Toast.LENGTH_SHORT).show()
             return
         }
+        Log.i("DEBUG LOCAL QUERIES", "Fetched data from local queries successfully!")
         allQueries = allQueries.shuffled()
-        Log.i("DEBUG", allQueries.toString())
         local_queries = allQueries.take(searchCount)
-        // Log.i("DEBUG", "number of queries: ${queries.size}")
+        // Log.i("DEBUG LOCAL QUERIES", "${allQueries}")
     }
 
     private fun readLocalQueries(): List<String> {
