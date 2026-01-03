@@ -1,5 +1,6 @@
 package com.tinkismee.microsort_reward_autosearcher
 
+import com.tinkismee.microsort_reward_autosearcher.BuildConfig
 import android.os.Bundle
 import android.util.Log
 import android.webkit.WebView
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fetched_queries_Reddit : List<String>
     private lateinit var fetched_queries_GoogleTrends : List<String>
     private lateinit var fetched_queries_Wikipedia : List<String>
-
+    private lateinit var fetched_queries_Newspaper : List<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,10 +74,12 @@ class MainActivity : AppCompatActivity() {
         fetchGoogleTrend()
         fetchLocalQueries()
         fetchWikipedia()
+        fetchNewspaper()
     }
 
     private fun initVars() {
         userAgent = ""
+        fetched_queries_Newspaper = listOf()
         fetched_queries_Wikipedia = listOf()
         fetched_queries_Reddit = listOf()
         fetched_queries_GoogleTrends = listOf()
@@ -110,6 +113,52 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun fetchNewspaper(){
+        getRandomUserAgent { user_Agent ->
+            Log.d("DEBUG NEWSPAPER", "Proceeding with User-Agent: $user_Agent")
+            var urls = listOf(
+                "https://newsapi.org/v2/everything?q=tesla&from=2025-12-03&sortBy=publishedAt&apiKey=${BuildConfig.API_KEY}",
+                "https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=${BuildConfig.API_KEY}",
+                "https://newsapi.org/v2/top-headlines?sources=techcrunch&apiKey=${BuildConfig.API_KEY}",
+                "https://newsapi.org/v2/everything?q=china&from=2025-12-03&sortBy=publishedAt&apiKey=${BuildConfig.API_KEY}",
+                "https://newsapi.org/v2/everything?domains=wsj.com&apiKey=${BuildConfig.API_KEY}",
+                "https://newsapi.org/v2/everything?q=apple&from=2025-12-03&sortBy=publishedAt&apiKey=${BuildConfig.API_KEY}",
+                "https://newsapi.org/v2/everything?q=vietnam&from=2025-12-03&sortBy=publishedAt&apiKey=${BuildConfig.API_KEY}")
+            urls = urls.shuffled()
+            val client = OkHttpClient()
+            val request = Request.Builder()
+                .url(urls[0])
+                .header("Accept", "application/json")
+                .header("User-Agent", user_Agent)
+                .build()
+            client.newCall(request).enqueue(object : okhttp3.Callback {
+                override fun onFailure(call: okhttp3.Call, e: IOException) {
+                    Log.e("DEBUG NEWSPAPER", "Request failed", e)
+                }
+                override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                    response.body()?.use { responseBody ->
+                        if (response.isSuccessful) {
+                            val body = responseBody.string()
+                            val json = JSONObject(body)
+                            val arraySize = json.getJSONArray("articles").length()
+                            if (arraySize > 0) {
+                                Log.i("DEBUG NEWSPAPER", "Fetched data from Newspaper successfully!")
+                                for (i in 0 until arraySize) {
+                                    val title = json.getJSONArray("articles").getJSONObject(i).getString("title")
+                                    fetched_queries_Newspaper = fetched_queries_Newspaper + title
+                                }
+                                // Log.i("DEBUG NEWSPAPER", "${fetched_queries_Newspaper}")
+                            }
+                        }
+                        else {
+                            Log.e("DEBUG NEWSPAPER", "HTTP ${response.code()}: ${response.message()}")
+                        }
+                    }
+                }
+            })
+        }
+
+    }
     private fun fetchWikipedia() {
         getRandomUserAgent { user_Agent ->
             Log.d("DEBUG WIKIPEDIA", "Proceeding with User-Agent: $user_Agent")
