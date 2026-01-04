@@ -363,7 +363,7 @@ class MainActivity : AppCompatActivity() {
     private fun fetchReddit() {
         getRandomUserAgent { user_Agent ->
             Log.d("DEBUG REDDIT", "Proceeding with User-Agent: $user_Agent")
-            val subReddits = listOf("news", "worldnews", "life", "todayilearned", "askreddit", "technology", "medical","food", "government", "education", "history", "culture", "money", )
+            val subReddits = listOf("news", "worldnews", "life", "todayilearned", "askreddit", "technology", "medical","food", "government", "education", "history", "culture", "money")
             val randomSubreddit = subReddits.random()
             val request = Request.Builder()
                 .url("https://www.reddit.com/r/$randomSubreddit/hot.json?limit=${(10..15).random()}")
