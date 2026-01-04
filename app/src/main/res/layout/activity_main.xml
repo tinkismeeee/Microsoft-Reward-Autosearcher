@@ -98,6 +98,15 @@
                 android:text="@string/keep_screen_on_description"
                 android:textSize="15sp" />
 
+            <CheckBox
+                android:id="@+id/backgroundRunBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:text="Chạy ngầm (Service)"
+                android:textSize="15sp" />
+
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"

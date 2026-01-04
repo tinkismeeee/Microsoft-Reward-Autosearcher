@@ -53,6 +53,8 @@ class MainActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { startAutoSearch() }
 
+    private lateinit var backgroundRunBtn: CheckBox // khai báo checkbox
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -109,7 +111,8 @@ class MainActivity : AppCompatActivity() {
         loginBtn = findViewById(R.id.loginBtn)
         logoutBtn = findViewById(R.id.logoutBtn)
         startBtn = findViewById(R.id.startBtn)
-        keepScreenBtn = findViewById(R.id.keepScreenBtn)
+        keepScreenBtn = findViewById(R.id.keepScreenBtn) // khai báo keepScreenBtn
+        backgroundRunBtn = findViewById(R.id.backgroundRunBtn)
         redditSourceBtn = findViewById(R.id.redditSourceBtn)
         googleTrendSourceBtn = findViewById(R.id.googleTrendSourceBtn)
         wikipediaSourceBtn = findViewById(R.id.wikipediaSourceBtn)
@@ -162,6 +165,35 @@ class MainActivity : AppCompatActivity() {
         keepScreenBtn.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+
+        // Kích hoạt service
+        backgroundRunBtn.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                // Xin quyền thông báo cho Android 13+ (nếu cần)
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                        != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                        androidx.core.app.ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+                    }
+                }
+
+                // Bật Service
+                val serviceIntent = android.content.Intent(this, AutoSearchService::class.java)
+                serviceIntent.putExtra("inputExtra", "Đang giữ app chạy nền...")
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    startForegroundService(serviceIntent)
+                } else {
+                    startService(serviceIntent)
+                }
+                Toast.makeText(this, "Đã bật chế độ chạy ngầm", Toast.LENGTH_SHORT).show()
+            } else {
+                // Tắt Service
+                val serviceIntent = android.content.Intent(this, AutoSearchService::class.java)
+                stopService(serviceIntent)
+                Toast.makeText(this, "Đã tắt chế độ chạy ngầm", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
