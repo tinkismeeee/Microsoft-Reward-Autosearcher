@@ -25,6 +25,7 @@ import java.io.IOException
 import org.json.JSONArray
 import android.view.WindowManager
 
+
 class MainActivity : AppCompatActivity() {
     private lateinit var searchInput: TextInputEditText
     private lateinit var webView: WebView
@@ -55,6 +56,11 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var backgroundRunBtn: CheckBox // khai báo checkbox
 
+    private lateinit var loadingLayout: android.widget.LinearLayout // thêm layout loading
+    private lateinit var statusTextView: TextView // thêm testview load tới bao nhiêu rồi
+
+    private lateinit var progressBar: android.widget.ProgressBar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -79,8 +85,22 @@ class MainActivity : AppCompatActivity() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 if (isRunning && waitingForSearch && currentIndex < finalQueries.size && url?.contains("bing.com") == true) {
                     waitingForSearch = false
+                    val displayIndex = currentIndex + 1
+                    statusTextView.text = "Đang chạy: $displayIndex / $searchCount"
+
+                    // Code mới để thanh chạy
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                        progressBar.setProgress(displayIndex, true) // Có hiệu ứng chạy mượt (Android 7+)
+                    } else {
+                        progressBar.progress = displayIndex
+                    }
                     searchLikeRealUser(finalQueries[currentIndex])
                     currentIndex++
+                    // Kiểm tra hoàn thành
+                    if (currentIndex >= searchCount) {
+                        statusTextView.text = "Hoàn thành!"
+                        // progressBar.progress = searchCount
+                    }
                     handler.postDelayed(
                         { startAutoSearch() },
                         delayCount * 1000L
@@ -117,6 +137,11 @@ class MainActivity : AppCompatActivity() {
         googleTrendSourceBtn = findViewById(R.id.googleTrendSourceBtn)
         wikipediaSourceBtn = findViewById(R.id.wikipediaSourceBtn)
         newspaperSourceBtn = findViewById(R.id.newspaperSourceBtn)
+
+        loadingLayout = findViewById(R.id.loadingLayout)
+        statusTextView = findViewById(R.id.statusTextView)
+        progressBar = findViewById(R.id.progressBar)
+
     }
 
     private fun listeners() {
@@ -133,6 +158,7 @@ class MainActivity : AppCompatActivity() {
                 isRunning = false
                 handler.removeCallbacks(searchRunnable)
                 startBtn.text = "Start"
+                loadingLayout.visibility = android.view.View.GONE // thêm dòng này để ẩn loading layout
                 Toast.makeText(this, "Auto searching has been stopped", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -159,6 +185,14 @@ class MainActivity : AppCompatActivity() {
             currentIndex = 0
             isRunning = true
             startBtn.text = "Stop"
+            // hiển thị loading
+            loadingLayout.visibility = android.view.View.VISIBLE
+            statusTextView.text = "Đang chuẩn bị..."
+
+            progressBar.max = searchCount // Đặt đích là tổng số lần search (ví dụ 30)
+            progressBar.progress = 0      // Reset về 0
+            statusTextView.text = "0 / $searchCount"
+
             handler.post(searchRunnable)
         }
 
