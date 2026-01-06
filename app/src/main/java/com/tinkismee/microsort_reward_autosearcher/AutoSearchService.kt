@@ -24,23 +24,20 @@ class AutoSearchService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val input = intent?.getStringExtra("inputExtra")
 
-        // Tạo intent để khi bấm vào thông báo sẽ mở lại MainActivity
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this, 0, notificationIntent,
             PendingIntent.FLAG_IMMUTABLE
         )
 
-        // Tạo thông báo hiển thị trên thanh trạng thái
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Reward Autosearcher đang chạy")
             .setContentText(input ?: "Đang tự động tìm kiếm...")
             .setSmallIcon(R.mipmap.ic_launcher_round) // Đảm bảo bạn có icon này
             .setContentIntent(pendingIntent)
-            .setOngoing(true) // Không thể gạt bỏ thông báo
+            .setOngoing(true)
             .build()
 
-        // Bắt đầu chạy Service dưới dạng Foreground (quan trọng để không bị giết)
         startForeground(1, notification)
 
         // Chạy logic tìm kiếm của bạn ở đây (nếu không dùng WebView)
