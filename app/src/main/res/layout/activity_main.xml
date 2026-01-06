@@ -159,13 +159,14 @@
 
 
             <LinearLayout
+                android:id="@+id/loadingLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginTop="10dp"
-                >
+                android:gravity="center"
+                android:visibility="gone"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="10dp">
 
                 <TextView
                     android:id="@+id/loginBtn"
@@ -204,6 +205,26 @@
                 android:layout_gravity="center_horizontal"
                 android:textSize="15sp"
                 app:cornerRadius="10dp" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="5dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:max="100"
+                android:progress="0"
+                android:progressTint="@color/material_dynamic_neutral_variant20" />
+
+            <TextView
+                android:id="@+id/statusTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0/0"
+                android:textColor="#333333"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
