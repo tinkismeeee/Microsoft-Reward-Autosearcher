@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Reward Autosearcher</string>
     <string name="search_hint">Enter number of searches</string>
-    <string name="delay_hint">Enter delay between searches</string>
+    <string name="delay_hint">Enter delay between searches (recommend 15+ seconds)</string>
     <string name="search_text">Search Count</string>
     <string name="delay_text">Delay (second)</string>
     <string name="keep_screen_on_description">Keep screen on during search</string>
@@ -15,4 +15,10 @@
     <string name="login_description">Login</string>
     <string name="logout_description">Logout</string>
     <string name="welcome_description">Microsoft Autosearcher</string>
+    <string name="background_description">Background process</string>
+    <string name="startBtn_description">Start</string>
+    <string name="stopBtn_description">Stop</string>
+    <string name="complete_description">Complete!</string>
+    <string name="progress_text">Processing: %1$d / %2$d</string>
+
 </resources>

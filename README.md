@@ -1,6 +1,6 @@
 # REWARD AUTOSEARCHER
 
-Reward Autosearcher là một ứng dụng Android được phát triển bằng Kotlin, giúp người dùng tự động hóa quá trình tìm kiếm trên Bing để tích lũy điểm Microsoft Rewards một cách hiệu quả và tiết kiệm thời gian.
+Reward Autosearcher là một ứng dụng Android được phát triển bằng ngôn ngữ lập trình Kotlin, giúp người dùng tự động hóa quá trình tìm kiếm trên Bing để tích lũy điểm Microsoft Rewards một cách hiệu quả và tiết kiệm thời gian.
 
 ## ✨ Tính năng nổi bật
 
@@ -12,27 +12,27 @@ Reward Autosearcher là một ứng dụng Android được phát triển bằng
 
 - Local Data: Sử dụng danh sách từ khóa tích hợp sẵn (queries.json) với nhiều chủ đề đa dạng.
 
-- Google Trends / Wikipedia: (Tùy chọn) Lấy từ khóa đang thịnh hành.
+- Google Trends / Wikipedia: Lấy từ khóa đang thịnh hành trên thế giới (random theo từng quốc gia).
 
 ## Giả lập User-Agent thông minh:
 
 - Tự động gọi API để lấy phiên bản Chrome mới nhất.
 
-- Giả lập trình duyệt PC (Windows 10) để tối ưu hóa điểm thưởng tìm kiếm trên máy tính.
+- Giả lập User-Agent để tránh bị phát hiện.
 
 ## Tùy chỉnh linh hoạt:
 
 - Thiết lập số lượng tìm kiếm mong muốn.
 
-- Cài đặt độ trễ (Delay) giữa các lần tìm kiếm để tránh bị phát hiện spam.
+- Cài đặt độ trễ (Delay) giữa các lần tìm kiếm để tránh bị phát hiện spam, mô phỏng quá triình tìm kiếm như người thật.
+
+- Quá trình lấy nguồn tìm kiếm sử dụng random User-Agent tránh bị phát hiện.
 
 - Quản lý tài khoản: Tích hợp WebView để đăng nhập và kiểm tra trạng thái tài khoản Microsoft Rewards trực tiếp.
 
-- Tiện ích: Chế độ giữ màn hình luôn sáng (Keep Screen On) khi đang chạy tác vụ.
+- Tiện ích: Chế độ giữ màn hình luôn sáng (Keep Screen On) khi đang chạy tác vụ, có thể chạy ngầm (Background).
 
 ## 🛠️ Công nghệ sử dụng
-
-- Dự án được xây dựng dựa trên các công nghệ Android hiện đại:
 
 |Công nghệ|Mô tả|
 |---|---|
@@ -58,28 +58,28 @@ Reward Autosearcher là một ứng dụng Android được phát triển bằng
 
 ## 🚀 Cài đặt và Chạy ứng dụng
 
-**Để chạy dự án này trên máy cục bộ, hãy làm theo các bước sau:**
+**Để chạy ứng dụng này, hãy làm theo các bước sau:**
 
 ### Yêu cầu:
 
-- Android Studio (phiên bản mới nhất).
-
-- JDK 11 trở lên.
+- Điện thoại sử dụng hệ điều hành Android (Android 9.0 hoặc cao hơn).
 
 ## Các bước thực hiện:
 
-1. Mở Android Studio và chọn Open.
+1. Mở ứng dụng **Reward Autosearcher** trên điện thoại.
 
-2. Điều hướng đến thư mục chứa dự án android.
+2. Bấm vào **Login** để đăng nhập (nếu chưa).
 
-3. Đợi Gradle đồng bộ hóa (Sync) các thư viện cần thiết.
+3. Nhập số lượng tìm kiếm và độ trễ mong muốn.
 
-4. Kết nối thiết bị Android (hoặc bật Emulator).
+4. Chọn source cần sử dụng (Reddit, Google Trends, Wikipedia, Newspaper), có thể để trống tất cả.
 
-5. Nhấn nút Run (▶️) để cài đặt ứng dụng.
+5. Nhấn nút **Start** để bắt đầu. 
 
 # ⚠️ Lưu ý
 
-Ứng dụng này được phát triển cho mục đích học tập và nghiên cứu về lập trình Android, xử lý mạng (Networking) và tự động hóa tác vụ. Việc sử dụng các công cụ tự động có thể vi phạm điều khoản dịch vụ của một số nền tảng.
+Ứng dụng này được phát triển cho mục đích học tập và nghiên cứu về lập trình Android, xử lý mạng (Networking) và tự động hóa tác vụ. Việc sử dụng công cụ tự động có thể vi phạm các điều khoản của **[Microsoft Rewards](https://www.microsoft.com/vi-vn/servicesagreement?utm_source=copilot.com#13l_MicrosoftRewards)**. Nếu xảy ra việc tài khoản bị cấm (suspended) hoặc hạn chế tạm thời (restricted), chúng tôi sẽ không chịu trách nhiệm cho các vấn đề xảy ra với tài khoản của bạn.   
+
+Để lấy source từ các bài báo (Newspaper) cần có API key. Hiện tại, API key được sử dụng từ nguồn của develope. Trong các phiên bản sắp tới, người dùng có thể sử dụng API key của chính mình. Số lượng query trên mỗi API key là 100/ngày cho bản miễn phí. Nguồn: **[News API](https://newsapi.org/)**
 
 # Developed by [[thaikhang113](https://github.com/thaikhang113)/[Tinkismee](https://github.com/tinkismeeee)]

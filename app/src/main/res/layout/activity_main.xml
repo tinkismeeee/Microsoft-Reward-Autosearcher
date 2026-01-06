@@ -59,6 +59,7 @@
                     android:imeOptions="actionDone"
                     android:inputType="number"
                     android:maxLines="1"
+                    android:text="30"
                     android:singleLine="true"
                     android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -82,6 +83,7 @@
                     android:imeOptions="actionDone"
                     android:inputType="number"
                     android:maxLines="1"
+                    android:text="60"
                     android:singleLine="true"
                     android:textSize="16sp" />
 
@@ -94,6 +96,15 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
                 android:text="@string/keep_screen_on_description"
+                android:textSize="15sp" />
+
+            <CheckBox
+                android:id="@+id/backgroundRunBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:text="@string/background_description"
                 android:textSize="15sp" />
 
             <TextView
@@ -148,37 +159,41 @@
 
 
             <LinearLayout
+                android:id="@+id/loginlogoutLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="15dp"
-                android:layout_marginTop="10dp"
-                >
+                android:layout_marginBottom="5dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="visible">
 
                 <TextView
                     android:id="@+id/loginBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/login_description"
-                    android:drawableStart="@drawable/login"
-                    android:gravity="center_vertical"
-                    android:drawablePadding="10dp"
                     android:layout_weight="1"
+                    android:drawableStart="@drawable/login"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/login_description"
                     android:textColor="@color/login_button_color"
-                    android:textSize="15sp"/>
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/logoutBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/logout_description"
-                    android:drawableStart="@drawable/logout"
-                    android:gravity="center_vertical"
-                    android:drawablePadding="10dp"
                     android:layout_weight="1"
+                    android:drawableStart="@drawable/logout"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="5dp"
+                    android:text="@string/logout_description"
                     android:textColor="@color/logout_button_color"
-                    android:textSize="15sp"/>
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <Button
@@ -193,6 +208,30 @@
                 android:layout_gravity="center_horizontal"
                 android:textSize="15sp"
                 app:cornerRadius="10dp" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="15dp"
+                android:layout_weight="1"
+                android:max="100"
+                android:progress="0"
+                android:progressTint="@color/button_color" />
+
+            <TextView
+                android:id="@+id/statusTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:text="0/0"
+                android:textAlignment="center"
+                android:textColor="#333333"
+                android:textSize="15sp" />
 
         </LinearLayout>
 

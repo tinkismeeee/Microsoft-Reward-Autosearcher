@@ -1,5 +1,6 @@
 package com.tinkismee.microsort_reward_autosearcher
 
+import android.annotation.SuppressLint
 import com.tinkismee.microsort_reward_autosearcher.BuildConfig
 import android.os.Bundle
 import android.os.Handler
@@ -24,6 +25,7 @@ import org.json.JSONObject
 import java.io.IOException
 import org.json.JSONArray
 import android.view.WindowManager
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var searchInput: TextInputEditText
@@ -53,6 +55,13 @@ class MainActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { startAutoSearch() }
 
+    private lateinit var backgroundRunBtn: CheckBox
+
+    private lateinit var loginlogoutLayout: android.widget.LinearLayout
+    private lateinit var statusTextView: TextView
+
+    private lateinit var progressBar: android.widget.ProgressBar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -77,8 +86,18 @@ class MainActivity : AppCompatActivity() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 if (isRunning && waitingForSearch && currentIndex < finalQueries.size && url?.contains("bing.com") == true) {
                     waitingForSearch = false
+                    val displayIndex = currentIndex + 1
+                    statusTextView.text = getString(R.string.progress_text, displayIndex, searchCount)
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                        progressBar.setProgress(displayIndex, true)
+                    } else {
+                        progressBar.progress = displayIndex
+                    }
                     searchLikeRealUser(finalQueries[currentIndex])
                     currentIndex++
+                    if (currentIndex >= searchCount) {
+                        statusTextView.text = getString(R.string.complete_description)
+                    }
                     handler.postDelayed(
                         { startAutoSearch() },
                         delayCount * 1000L
@@ -110,10 +129,15 @@ class MainActivity : AppCompatActivity() {
         logoutBtn = findViewById(R.id.logoutBtn)
         startBtn = findViewById(R.id.startBtn)
         keepScreenBtn = findViewById(R.id.keepScreenBtn)
+        backgroundRunBtn = findViewById(R.id.backgroundRunBtn)
         redditSourceBtn = findViewById(R.id.redditSourceBtn)
         googleTrendSourceBtn = findViewById(R.id.googleTrendSourceBtn)
         wikipediaSourceBtn = findViewById(R.id.wikipediaSourceBtn)
         newspaperSourceBtn = findViewById(R.id.newspaperSourceBtn)
+        loginlogoutLayout = findViewById(R.id.loginlogoutLayout)
+        statusTextView = findViewById(R.id.statusTextView)
+        progressBar = findViewById(R.id.progressBar)
+
     }
 
     private fun listeners() {
@@ -129,7 +153,9 @@ class MainActivity : AppCompatActivity() {
             if (isRunning) {
                 isRunning = false
                 handler.removeCallbacks(searchRunnable)
-                startBtn.text = "Start"
+                startBtn.text = getString(R.string.startBtn_description)
+                statusTextView.text = "0/0"
+                progressBar.progress = 0
                 Toast.makeText(this, "Auto searching has been stopped", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -155,13 +181,39 @@ class MainActivity : AppCompatActivity() {
             finalQueries = finalQueries.map { it.lowercase() }.distinct().shuffled().take(searchCount)
             currentIndex = 0
             isRunning = true
-            startBtn.text = "Stop"
+            startBtn.text = getString(R.string.stopBtn_description)
+            progressBar.max = searchCount
+            progressBar.progress = 0
+            statusTextView.text = "0 / $searchCount"
             handler.post(searchRunnable)
         }
 
         keepScreenBtn.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+
+        backgroundRunBtn.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                        != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                        androidx.core.app.ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+                    }
+                }
+                val serviceIntent = android.content.Intent(this, AutoSearchService::class.java)
+                serviceIntent.putExtra("inputExtra", "Đang giữ app chạy nền...")
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    startForegroundService(serviceIntent)
+                } else {
+                    startService(serviceIntent)
+                }
+                Toast.makeText(this, "Background mode has been enabled", Toast.LENGTH_SHORT).show()
+            } else {
+                val serviceIntent = android.content.Intent(this, AutoSearchService::class.java)
+                stopService(serviceIntent)
+                Toast.makeText(this, "Background mode has been disabled", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -186,7 +238,7 @@ class MainActivity : AppCompatActivity() {
                         input.value += text.charAt(i);
                         input.dispatchEvent(new Event('input', { bubbles: true }));
                         i++;
-                        setTimeout(typeChar, 20 + Math.random() * 10);
+                        setTimeout(typeChar, 20 + Math.random() * 15);
                     } else {
                         input.dispatchEvent(
                             new KeyboardEvent('keydown', {
@@ -212,7 +264,7 @@ class MainActivity : AppCompatActivity() {
         if (currentIndex >= finalQueries.size) {
             isRunning = false
             currentIndex = 0
-            startBtn.text = "Start"
+            startBtn.text = getString(R.string.startBtn_description)
             return
         }
         waitingForSearch = true
@@ -303,8 +355,8 @@ class MainActivity : AppCompatActivity() {
     private fun fetchGoogleTrend() {
         getRandomUserAgent { user_Agent ->
             Log.d("DEBUG GOOGLE TREND", "Proceeding with User-Agent: $user_Agent")
-            val GeoLocation = listOf("VN","US","GE", "FR", "ES", "IT", "PT", "BR", "RO")
-            val randomGeoLocation = GeoLocation.shuffled()[0]
+            val geoLocation = listOf("VN","US","GE", "FR", "ES", "IT", "PT", "BR", "RO")
+            val randomGeoLocation = geoLocation.shuffled()[0]
             val client = OkHttpClient()
             val formBody = FormBody.Builder()
                 .add("f.req", "[[[\"i0OFE\",\"[null,null,\\\"${randomGeoLocation}\\\",0,null,${(20..48).random()}]\"]]]")
@@ -327,11 +379,6 @@ class MainActivity : AppCompatActivity() {
                     response.body()?.use { responseBody ->
                         if (response.isSuccessful) {
                             val body = responseBody.string()
-                            val pattern = Regex(",\\d+\\]\\]$")
-//                            val matchResult = pattern.find(body)
-//                            if (matchResult != null) {
-//                                val matchedString = matchResult.value
-//                            }
                             val data = body.replace(")]}'", "").trimStart()
                             val rootArray = JSONArray(data)
                             val innerArray = JSONArray(rootArray.getJSONArray(0).getString(2))

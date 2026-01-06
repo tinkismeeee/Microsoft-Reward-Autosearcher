@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Reward Autosearcher</string>
+    <string name="search_hint">Nhập số lần search</string>
+    <string name="delay_hint">Nhập delay (recommend 15+ giây)</string>
+    <string name="search_text">Số lần search</string>
+    <string name="delay_text">Số giây delay</string>
+    <string name="keep_screen_on_description">Giữ màn hình luôn sáng</string>
+    <string name="query_description">Nguồn:</string>
+    <string name="reddit_source">Reddit</string>
+    <string name="wikipedia_source">Wikipedia</string>
+    <string name="google_trend_source">Google Trends</string>
+    <string name="bing_trend_source">Bing Trends</string>
+    <string name="newspaper_source">Báo điện tử</string>
+    <string name="start_description">Bắt đầu</string>
+    <string name="login_description">Đăng nhập</string>
+    <string name="logout_description">Đăng xuất</string>
+    <string name="welcome_description">Microsoft Autosearcher</string>
+    <string name="background_description">Chạy nền</string>
+    <string name="startBtn_description">Bắt đầu</string>
+    <string name="stopBtn_description">Kết thúc</string>
+    <string name="complete_description">Hoàn thành!</string>
+    <string name="progress_text">Thành công: %1$d / %2$d</string>
+
+</resources>
