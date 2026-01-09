@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var loginlogoutLayout: android.widget.LinearLayout
     private lateinit var statusTextView: TextView
+    private lateinit var deviceModeGroup: android.widget.RadioGroup
 
     private lateinit var progressBar: android.widget.ProgressBar
 
@@ -146,6 +147,7 @@ class MainActivity : AppCompatActivity() {
         loginlogoutLayout = findViewById(R.id.loginlogoutLayout)
         statusTextView = findViewById(R.id.statusTextView)
         progressBar = findViewById(R.id.progressBar)
+        deviceModeGroup = findViewById(R.id.deviceModeGroup)
 
     }
 
@@ -156,6 +158,20 @@ class MainActivity : AppCompatActivity() {
 
         logoutBtn.setOnClickListener {
             webView.loadUrl("https://rewards.bing.com/Signout")
+        }
+        deviceModeGroup.setOnCheckedChangeListener { _, checkedId ->
+            val isDesktop = (checkedId == R.id.radioPC)
+            getRandomUserAgent(isDesktop) { ua ->
+                // Cập nhật User-Agent cho WebView ngay lập tức
+                webView.settings.userAgentString = ua
+                Log.d("DEBUG", "User-Agent switched to: $ua")
+                // Load lại trang để Bing nhận diện thiết bị mới (tùy chọn)
+                webView.reload()
+            }
+        }
+
+        getRandomUserAgent(false) { ua ->
+            webView.settings.userAgentString = ua
         }
 
         startBtn.setOnClickListener {
@@ -174,10 +190,13 @@ class MainActivity : AppCompatActivity() {
             }
             searchCount = searchInput.text.toString().toInt()
             delayCount = delayInput.text.toString().toInt()
+            val isDesktop = (deviceModeGroup.checkedRadioButtonId == R.id.radioPC)
             if (searchCount <= 0 || delayCount <= 0) {
                 Toast.makeText(this, "Please enter valid number of searches or delay", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            getRandomUserAgent(isDesktop) { ua ->
+                webView.settings.userAgentString = ua
             finalQueries = listOf()
             if (redditSourceBtn.isChecked) finalQueries = finalQueries + fetched_queries_Reddit
             if (googleTrendSourceBtn.isChecked) finalQueries = finalQueries + fetched_queries_GoogleTrends
@@ -186,7 +205,7 @@ class MainActivity : AppCompatActivity() {
             if (finalQueries.isEmpty()) {
                 Toast.makeText(this, "No queries selected, fallback to local queries", Toast.LENGTH_LONG).show()
                 finalQueries = finalQueries + local_queries
-            }
+            }}
             finalQueries = finalQueries.map { it.lowercase() }.distinct().shuffled().take(searchCount)
             currentIndex = 0
             isRunning = true
@@ -280,7 +299,7 @@ class MainActivity : AppCompatActivity() {
         webView.loadUrl("https://www.bing.com")
     }
     private fun fetchNewspaper(){
-        getRandomUserAgent { user_Agent ->
+        getRandomUserAgent(false) { user_Agent ->
             Log.d("DEBUG NEWSPAPER", "Proceeding with User-Agent: $user_Agent")
             var urls = listOf(
                 "https://newsapi.org/v2/everything?q=tesla&from=2025-12-03&sortBy=publishedAt&apiKey=${BuildConfig.API_KEY}",
@@ -326,7 +345,7 @@ class MainActivity : AppCompatActivity() {
 
     }
     private fun fetchWikipedia() {
-        getRandomUserAgent { user_Agent ->
+        getRandomUserAgent(false) { user_Agent ->
             Log.d("DEBUG WIKIPEDIA", "Proceeding with User-Agent: $user_Agent")
             val client = OkHttpClient()
             val request = Request.Builder()
@@ -362,7 +381,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private fun fetchGoogleTrend() {
-        getRandomUserAgent { user_Agent ->
+        getRandomUserAgent(false) { user_Agent ->
             Log.d("DEBUG GOOGLE TREND", "Proceeding with User-Agent: $user_Agent")
             val geoLocation = listOf("VN","US","GE", "FR", "ES", "IT", "PT", "BR", "RO")
             val randomGeoLocation = geoLocation.shuffled()[0]
@@ -417,7 +436,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private fun fetchReddit() {
-        getRandomUserAgent { user_Agent ->
+        getRandomUserAgent(false) { user_Agent ->
             Log.d("DEBUG REDDIT", "Proceeding with User-Agent: $user_Agent")
             val subReddits = listOf("news", "worldnews", "life", "todayilearned", "askreddit", "technology", "medical","food", "government", "education", "history", "culture", "money")
             val randomSubreddit = subReddits.random()
@@ -484,7 +503,7 @@ class MainActivity : AppCompatActivity() {
         return allQueries
     }
 
-    private fun getRandomUserAgent(onUserAgentReady: (String) -> Unit){
+    private fun getRandomUserAgent(isDesktop: Boolean, onUserAgentReady: (String) -> Unit){
         try {
             RetrofitClient_getChromeVersion.instance.getChromeVersion("application/json")
                 .enqueue(object : retrofit2.Callback<ChromeVersionResponse> {
@@ -493,30 +512,45 @@ class MainActivity : AppCompatActivity() {
                         if (response.isSuccessful) {
                             val chromeVersionResponse = response.body()
                             val chromeVersions = chromeVersionResponse!!.channels.values.map { it.version }
-                            val androidVersion = (10..14).random()
-                            val systemComponent = "Linux; Android ${androidVersion}; K"
                             val shuffledVersions = chromeVersions.shuffled()
                             val chromeMajorVersion = shuffledVersions[0].split('.')[0]
                             val chromeReducedVersion = "$chromeMajorVersion.0.0.0"
-                            finalUserAgent = "Mozilla/5.0 ($systemComponent) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$chromeReducedVersion Safari/537.36"
-//                            Log.i("DEBUG", "User agent fetched: $finalUserAgent")
+
+                            // Logic xử lý User-Agent theo thiết bị
+                            finalUserAgent = if (isDesktop) {
+                                // User-Agent cho PC (Windows 10)
+                                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$chromeReducedVersion Safari/537.36"
+                            } else {
+                                // User-Agent cho Mobile (Android)
+                                val androidVersion = (10..14).random()
+                                val systemComponent = "Linux; Android ${androidVersion}; K"
+                                "Mozilla/5.0 ($systemComponent) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$chromeReducedVersion Safari/537.36"
+                            }
                         } else {
                             Log.w("DEBUG", "Failed to get chrome version, using default.")
-                            // Default user-agent
-                            finalUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+                            // Fallback nếu lỗi mạng
+                            finalUserAgent = if (isDesktop) {
+                                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+                            } else {
+                                "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+                            }
                         }
                         onUserAgentReady(finalUserAgent)
                     }
                     override fun onFailure(call: Call<ChromeVersionResponse>, t: Throwable) {
                         Log.e("DEBUG", "Failed to get chrome version on failure: ${t.message}", t)
-                        // Default user-agent
-                        val defaultUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-                        onUserAgentReady(defaultUserAgent)
+                        // Fallback khi lỗi
+                        val fallbackUserAgent = if (isDesktop) {
+                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+                        } else {
+                            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+                        }
+                        onUserAgentReady(fallbackUserAgent)
                     }
                 })
         } catch (e: Exception) {
             Log.e("DEBUG", "Exception in getRandomUserAgent: ${e.message}", e)
-            val defaultUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            val defaultUserAgent = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
             onUserAgentReady(defaultUserAgent)
         }
     }

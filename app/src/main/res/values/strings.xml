@@ -19,6 +19,8 @@
     <string name="startBtn_description">Start</string>
     <string name="stopBtn_description">Stop</string>
     <string name="complete_description">Complete!</string>
+    <string name="device_mode_label">Chế độ giả lập thiết bị:</string>
+    <string name="mode_mobile">Mobile</string>
+    <string name="mode_pc">PC</string>
     <string name="progress_text">Processing: %1$d / %2$d</string>
-
 </resources>

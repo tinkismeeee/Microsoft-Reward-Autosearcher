@@ -108,6 +108,39 @@
                 android:textSize="15sp" />
 
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/device_mode_label"
+                android:textSize="15sp" />
+
+            <RadioGroup
+                android:id="@+id/deviceModeGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp">
+
+                <RadioButton
+                    android:id="@+id/radioMobile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mode_mobile"
+                    android:checked="true"
+                    android:layout_weight="1"/>
+
+                <RadioButton
+                    android:id="@+id/radioPC"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mode_pc"
+                    android:layout_weight="1"/>
+            </RadioGroup>
+
+            <TextView
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
