@@ -80,6 +80,6 @@ Reward Autosearcher là một ứng dụng Android được phát triển bằng
 
 Ứng dụng này được phát triển cho mục đích học tập và nghiên cứu về lập trình Android, xử lý mạng (Networking) và tự động hóa tác vụ. Việc sử dụng công cụ tự động có thể vi phạm các điều khoản của **[Microsoft Rewards](https://www.microsoft.com/vi-vn/servicesagreement?utm_source=copilot.com#13l_MicrosoftRewards)**. Nếu xảy ra việc tài khoản bị cấm (suspended) hoặc hạn chế tạm thời (restricted), chúng tôi sẽ không chịu trách nhiệm cho các vấn đề xảy ra với tài khoản của bạn.   
 
-Để lấy source từ các bài báo (Newspaper) cần có API key. Hiện tại, API key được sử dụng từ nguồn của develope. Trong các phiên bản sắp tới, người dùng có thể sử dụng API key của chính mình. Số lượng query trên mỗi API key là 100/ngày cho bản miễn phí. Nguồn: **[News API](https://newsapi.org/)**
+Để lấy source từ các bài báo (Newspaper) cần có API key. Hiện tại, API key được sử dụng từ nguồn của lập trình viên. Trong các phiên bản sắp tới, người dùng có thể sử dụng API key của chính mình. Số lượng querry trên mỗi API key là 100/ngày cho bản miễn phí. Nguồn: **[News API](https://newsapi.org/)**
 
 # Developed by [[thaikhang113](https://github.com/thaikhang113)/[Tinkismee](https://github.com/tinkismeeee)]
