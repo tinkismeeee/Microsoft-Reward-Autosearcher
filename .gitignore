@@ -7,6 +7,7 @@
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+app/src/main/java/com/tinkismee/microsort_reward_autosearcher/MainActivity.kt
 .DS_Store
 /build
 /captures
