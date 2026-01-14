@@ -25,6 +25,7 @@ import org.json.JSONObject
 import java.io.IOException
 import org.json.JSONArray
 import android.view.WindowManager
+import android.webkit.CookieManager
 import java.util.Locale
 
 
@@ -155,6 +156,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         logoutBtn.setOnClickListener {
+            webView.clearCache(true)
+            webView.clearFormData()
+            webView.clearHistory()
+            webView.clearSslPreferences()
+            webView.clearMatches()
+            CookieManager.getInstance().removeAllCookies {
+                CookieManager.getInstance().flush()
+            }
             webView.loadUrl("https://rewards.bing.com/Signout")
         }
 
