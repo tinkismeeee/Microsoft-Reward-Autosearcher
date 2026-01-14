@@ -31,7 +31,7 @@ Reward Autosearcher is an Android application developed in Kotlin, designed to a
 
 - Utilities: Keep screen on while running tasks, support background execution.
 
-## 🛠️ Công nghệ sử dụng
+## 🛠️ Technologies Used
 
 | Technology    |Description|
 |---------------|---|
