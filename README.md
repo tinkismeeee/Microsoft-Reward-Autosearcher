@@ -1,4 +1,6 @@
+
 # REWARD AUTOSEARCHER
+(Vietnamese | [English](README_en.md))
 
 Reward Autosearcher là một ứng dụng Android được phát triển bằng ngôn ngữ lập trình Kotlin, giúp người dùng tự động hóa quá trình tìm kiếm trên Bing để tích lũy điểm Microsoft Rewards một cách hiệu quả và tiết kiệm thời gian.
 
