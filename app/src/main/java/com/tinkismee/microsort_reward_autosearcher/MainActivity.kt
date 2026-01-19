@@ -94,24 +94,20 @@ class MainActivity : AppCompatActivity() {
         webView.loadUrl("https://www.bing.com")
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
-                if (isRunning && waitingForSearch && currentIndex < finalQueries.size && url?.contains("bing.com") == true) {
-                    waitingForSearch = false
-                    val displayIndex = currentIndex + 1
-                    statusTextView.text = getString(R.string.progress_text, displayIndex, searchCount)
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                        progressBar.setProgress(displayIndex, true)
-                    } else {
-                        progressBar.progress = displayIndex
+                if (!isRunning) return
+                when {
+                    waitingForSearch && url == "https://www.bing.com/" -> {
+                        waitingForSearch = false
+                        searchLikeRealUser(finalQueries[currentIndex])
+                        currentIndex++
                     }
-                    searchLikeRealUser(finalQueries[currentIndex])
-                    currentIndex++
-                    if (currentIndex >= searchCount) {
-                        statusTextView.text = getString(R.string.complete_description)
+                    url?.contains("bing.com/search") == true -> {
+                        ScrollJS()
+                        handler.postDelayed({
+                            waitingForSearch = true
+                            startAutoSearch()
+                        }, delayCount * 1000L)
                     }
-                    handler.postDelayed(
-                        { startAutoSearch() },
-                        delayCount * 1000L
-                    )
                 }
             }
         }
@@ -535,6 +531,34 @@ class MainActivity : AppCompatActivity() {
         val config = resources.configuration
         config.setLocale(locale)
         resources.updateConfiguration(config, resources.displayMetrics)
+    }
+
+    private fun ScrollJS() {
+        val js = """
+            (function () {
+                function random(min, max) {
+                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                }
+                let scrollTimes = random(3, 6);
+                let count = 0;
+                function limitedScroll() {
+                    if (count >= scrollTimes) {
+                        return; 
+                    }
+                    window.scrollBy({
+                        top: random(150, 600),
+                        behavior: 'smooth'
+                    });
+                    count++;
+                    setTimeout(
+                        limitedScroll,
+                        random(500, 1200) 
+                    );
+                }
+                setTimeout(limitedScroll, random(600, 1200));
+            })();
+            """.trimIndent()
+        webView.evaluateJavascript(js, null)
     }
 
 }
