@@ -30,6 +30,7 @@ Reward Autosearcher is an Android application developed in Kotlin, designed to a
 - Account Management: Integrated WebView for login and checking Microsoft Rewards account status.
 
 - Utilities: Keep screen on while running tasks, support background execution.
+- Human-like scrolling.
 
 ## 🛠️ Technologies Used
 
