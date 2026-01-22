@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fetched_queries_GoogleTrends: List<String>
     private lateinit var fetched_queries_Wikipedia: List<String>
     private lateinit var fetched_queries_Newspaper: List<String>
-    private lateinit var finalQueries: List<String>
+    private lateinit var finalQueries: MutableList<String>
     private var currentIndex = 0
     private var isRunning = false
     private var waitingForSearch = false
@@ -94,11 +94,15 @@ class MainActivity : AppCompatActivity() {
         webView.loadUrl("https://www.bing.com")
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
-                if (!isRunning) return
+                if (!isRunning) {
+                    return
+                }
                 when {
                     waitingForSearch && url == "https://www.bing.com/" -> {
                         waitingForSearch = false
                         searchLikeRealUser(finalQueries[currentIndex])
+                        statusTextView.text = getString(R.string.progress_text, (currentIndex + 1), searchCount)
+                        progressBar.setProgress(currentIndex + 1, true)
                         currentIndex++
                     }
                     url?.contains("bing.com/search") == true -> {
@@ -123,7 +127,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initVars() {
         userAgent = ""
-        finalQueries = listOf()
+        finalQueries = mutableListOf()
         fetched_queries_Newspaper = listOf()
         fetched_queries_Wikipedia = listOf()
         fetched_queries_Reddit = listOf()
@@ -183,16 +187,24 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please enter valid number of searches or delay", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            finalQueries = listOf()
-            if (redditSourceBtn.isChecked) finalQueries = finalQueries + fetched_queries_Reddit
-            if (googleTrendSourceBtn.isChecked) finalQueries = finalQueries + fetched_queries_GoogleTrends
-            if (wikipediaSourceBtn.isChecked) finalQueries = finalQueries + fetched_queries_Wikipedia
-            if (newspaperSourceBtn.isChecked) finalQueries = finalQueries + fetched_queries_Newspaper
+            finalQueries = mutableListOf()
+            if (redditSourceBtn.isChecked) finalQueries.addAll(fetched_queries_Reddit)
+            if (googleTrendSourceBtn.isChecked) finalQueries.addAll(fetched_queries_GoogleTrends)
+            if (wikipediaSourceBtn.isChecked) finalQueries.addAll(fetched_queries_Wikipedia)
+            if (newspaperSourceBtn.isChecked) finalQueries.addAll(fetched_queries_Newspaper)
             if (finalQueries.isEmpty()) {
                 Toast.makeText(this, "No queries selected, fallback to local queries", Toast.LENGTH_LONG).show()
-                finalQueries = finalQueries + local_queries
+                finalQueries.addAll(local_queries)
             }
-            finalQueries = finalQueries.map { it.lowercase() }.distinct().shuffled().take(searchCount)
+            finalQueries = finalQueries.map { it.lowercase() }.distinct().shuffled().take(searchCount).toMutableList()
+            Log.i("DEBUG FINAL QUERIES", finalQueries.toString())
+            for (i in 0 until finalQueries.size) {
+                finalQueries[i] = finalQueries[i].replace(Regex("[^A-Za-z0-9 ]"),"")
+                var temp = finalQueries[i].split(' ')
+                temp = temp.take((3..6).random())
+                finalQueries[i] = temp.joinToString(" ")
+            }
+            Log.i("DEBUG FINAL QUERIES", finalQueries.toString())
             currentIndex = 0
             isRunning = true
             startBtn.text = getString(R.string.stopBtn_description)
@@ -279,6 +291,7 @@ class MainActivity : AppCompatActivity() {
             isRunning = false
             currentIndex = 0
             startBtn.text = getString(R.string.startBtn_description)
+            statusTextView.text = getString(R.string.complete_description)
             return
         }
         waitingForSearch = true
@@ -539,7 +552,7 @@ class MainActivity : AppCompatActivity() {
                 function random(min, max) {
                     return Math.floor(Math.random() * (max - min + 1)) + min;
                 }
-                let scrollTimes = random(3, 6);
+                let scrollTimes = random(0, 5);
                 let count = 0;
                 function limitedScroll() {
                     if (count >= scrollTimes) {
