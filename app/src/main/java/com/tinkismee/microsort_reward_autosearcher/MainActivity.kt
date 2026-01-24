@@ -1,15 +1,17 @@
 package com.tinkismee.microsort_reward_autosearcher
 
-import android.annotation.SuppressLint
-import com.tinkismee.microsort_reward_autosearcher.BuildConfig
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.View
+import android.view.WindowManager
+import android.webkit.CookieManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -19,13 +21,11 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
-import retrofit2.Call
 import okhttp3.*
-import org.json.JSONObject
-import java.io.IOException
 import org.json.JSONArray
-import android.view.WindowManager
-import android.webkit.CookieManager
+import org.json.JSONObject
+import retrofit2.Call
+import java.io.IOException
 import java.util.Locale
 
 
@@ -58,10 +58,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var backgroundRunBtn: CheckBox
     private lateinit var statusTextView: TextView
     private lateinit var progressBar: android.widget.ProgressBar
+    private lateinit var vietnam: ImageView
+    private lateinit var unitedstates: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setAppLocale("en")
+        loadLocale()
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -69,13 +71,6 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        // Set default language to English
-        val locale = Locale("en")
-        Locale.setDefault(locale)
-        val config = resources.configuration
-        config.setLocale(locale)
-        resources.updateConfiguration(config, resources.displayMetrics)
-
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         webView = findViewById(R.id.webViewBing)
@@ -141,10 +136,18 @@ class MainActivity : AppCompatActivity() {
         newspaperSourceBtn = findViewById(R.id.newspaperSourceBtn)
         statusTextView = findViewById(R.id.statusTextView)
         progressBar = findViewById(R.id.progressBar)
-
+        unitedstates = findViewById(R.id.unitedstates)
+        vietnam = findViewById(R.id.vietnam)
     }
 
     private fun listeners() {
+        unitedstates.setOnClickListener {
+            setLocale("en")
+        }
+
+        vietnam.setOnClickListener {
+            setLocale("vi")
+        }
         loginBtn.setOnClickListener {
             webView.loadUrl("https://www.bing.com/fd/auth/signin?action=interactive&provider=windows_live_id&return_url=https%3A%2F%2Fwww.bing.com%2F")
         }
@@ -168,17 +171,17 @@ class MainActivity : AppCompatActivity() {
                 startBtn.text = getString(R.string.startBtn_description)
                 statusTextView.text = "0/0"
                 progressBar.progress = 0
-                Toast.makeText(this, "Auto searching has been stopped", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.stopBtn_notification), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (searchInput.text.toString().isEmpty() || delayInput.text.toString().isEmpty()) {
-                Toast.makeText(this, "Please enter valid number of searches or delay", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.invalid_searchcount), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             searchCount = searchInput.text.toString().toInt()
             delayCount = delayInput.text.toString().toInt()
             if (searchCount <= 0 || delayCount <= 0) {
-                Toast.makeText(this, "Please enter valid number of searches or delay", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.invalid_delay), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             finalQueries = mutableListOf()
@@ -187,7 +190,7 @@ class MainActivity : AppCompatActivity() {
             if (wikipediaSourceBtn.isChecked) finalQueries.addAll(fetched_queries_Wikipedia)
             if (newspaperSourceBtn.isChecked) finalQueries.addAll(fetched_queries_Newspaper)
             if (finalQueries.isEmpty()) {
-                Toast.makeText(this, "No queries selected, fallback to local queries", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.noqueries_found), Toast.LENGTH_LONG).show()
                 finalQueries.addAll(local_queries)
             }
             finalQueries = finalQueries.map { it.lowercase() }.distinct().shuffled().take(searchCount).toMutableList()
@@ -228,11 +231,11 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     startService(serviceIntent)
                 }
-                Toast.makeText(this, "Background mode has been enabled", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.background_start), Toast.LENGTH_SHORT).show()
             } else {
                 val serviceIntent = android.content.Intent(this, AutoSearchService::class.java)
                 stopService(serviceIntent)
-                Toast.makeText(this, "Background mode has been disabled", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.background_stop), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -394,7 +397,6 @@ class MainActivity : AppCompatActivity() {
             client.newCall(request).enqueue(object : okhttp3.Callback {
                 override fun onFailure(call: okhttp3.Call, e: IOException) {
                     Log.e("DEBUG GOOGLE TREND", "Request failed", e)
-                    Toast.makeText(this@MainActivity, "Fetching data from Google Trends failed!", Toast.LENGTH_SHORT).show()
                 }
                 override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
                     response.body()?.use { responseBody ->
@@ -441,7 +443,6 @@ class MainActivity : AppCompatActivity() {
             client.newCall(request).enqueue(object : okhttp3.Callback {
                 override fun onFailure(call: okhttp3.Call, e: IOException) {
                     Log.e("DEBUG REDDIT", "Request failed", e)
-                    Toast.makeText(this@MainActivity, "Fetching data from Reddit failed!", Toast.LENGTH_SHORT).show()
                 }
                 override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
                     response.body()?.use { responseBody ->
@@ -473,7 +474,7 @@ class MainActivity : AppCompatActivity() {
         var allQueries = readLocalQueries()
         if (allQueries.isEmpty()) {
             Log.i("DEBUG", "No local queries found")
-            Toast.makeText(this, "No local queries found or can't read them", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.noqueries_found), Toast.LENGTH_SHORT).show()
             return
         }
         Log.i("DEBUG LOCAL QUERIES", "Fetched data from local queries successfully!")
@@ -568,4 +569,27 @@ class MainActivity : AppCompatActivity() {
         webView.evaluateJavascript(js, null)
     }
 
+    private fun setLocale(langCode: String) {
+        val locale = Locale(langCode)
+        Locale.setDefault(locale)
+        val resources = resources
+        val config = resources.configuration
+        config.setLocale(locale)
+        resources.updateConfiguration(config, resources.displayMetrics)
+        val prefs = getSharedPreferences("Settings", MODE_PRIVATE)
+        prefs.edit().putString("My_Lang", langCode).apply()
+        recreate()
+    }
+
+    private fun loadLocale() {
+        val prefs = getSharedPreferences("Settings", MODE_PRIVATE)
+        val lang = prefs.getString("My_Lang", "")
+        if (!lang.isNullOrEmpty()) {
+            val locale = Locale(lang)
+            Locale.setDefault(locale)
+            val config = resources.configuration
+            config.setLocale(locale)
+            resources.updateConfiguration(config, resources.displayMetrics)
+        }
+    }
 }

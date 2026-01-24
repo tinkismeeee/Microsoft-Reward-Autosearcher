@@ -20,5 +20,11 @@
     <string name="stopBtn_description">Kết thúc</string>
     <string name="complete_description">Hoàn thành!</string>
     <string name="progress_text">Thành công: %1$d / %2$d</string>
+    <string name="stopBtn_notification">Autosearcher đã dừng</string>
+    <string name="noqueries_found">Không tìm thấy nguồn query, sử dụng nguồn cục bộ</string>
+    <string name="invalid_delay">Số lần search hoặc delay không hợp lệ</string>
+    <string name="invalid_searchcount">Số lần search hoặc delay không hợp lệ</string>
+    <string name="background_start">Đã bật chế độ chạy ngầm</string>
+    <string name="background_stop">Đã tắt chế độ chạy ngầm</string>
 
 </resources>

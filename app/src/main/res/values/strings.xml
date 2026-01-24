@@ -20,5 +20,10 @@
     <string name="stopBtn_description">Stop</string>
     <string name="complete_description">Completed!</string>
     <string name="progress_text">Processing: %1$d / %2$d</string>
-
+    <string name="stopBtn_notification">Auto searching has been stopped</string>
+    <string name="noqueries_found">No query sources selected, fallback to local queries</string>
+    <string name="invalid_delay">Please enter valid number of searches or delay</string>
+    <string name="invalid_searchcount">Please enter valid number of searches or delay</string>
+    <string name="background_start">Background mode has been enabled</string>
+    <string name="background_stop">Background mode has been disabled</string>
 </resources>
