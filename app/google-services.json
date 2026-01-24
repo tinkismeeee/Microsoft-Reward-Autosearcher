@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "352221909019",
+    "project_id": "autosearcher-c616b",
+    "storage_bucket": "autosearcher-c616b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:352221909019:android:3b992d48bece3171c3e8be",
+        "android_client_info": {
+          "package_name": "com.tinkismee.microsort_reward_autosearcher"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTCvGwJOkD1DJ0nsN_eHJBLpq9R-rSysg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
