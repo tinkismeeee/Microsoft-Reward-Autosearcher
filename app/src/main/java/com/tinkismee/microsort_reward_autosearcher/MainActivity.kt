@@ -53,15 +53,10 @@ class MainActivity : AppCompatActivity() {
     private var currentIndex = 0
     private var isRunning = false
     private var waitingForSearch = false
-
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { startAutoSearch() }
-
     private lateinit var backgroundRunBtn: CheckBox
-
-    private lateinit var loginlogoutLayout: android.widget.LinearLayout
     private lateinit var statusTextView: TextView
-
     private lateinit var progressBar: android.widget.ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -144,7 +139,6 @@ class MainActivity : AppCompatActivity() {
         googleTrendSourceBtn = findViewById(R.id.googleTrendSourceBtn)
         wikipediaSourceBtn = findViewById(R.id.wikipediaSourceBtn)
         newspaperSourceBtn = findViewById(R.id.newspaperSourceBtn)
-        loginlogoutLayout = findViewById(R.id.loginlogoutLayout)
         statusTextView = findViewById(R.id.statusTextView)
         progressBar = findViewById(R.id.progressBar)
 
@@ -152,7 +146,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun listeners() {
         loginBtn.setOnClickListener {
-            webView.loadUrl("https://www.bing.com/rewards/dashboard")
+            webView.loadUrl("https://www.bing.com/fd/auth/signin?action=interactive&provider=windows_live_id&return_url=https%3A%2F%2Fwww.bing.com%2F")
         }
 
         logoutBtn.setOnClickListener {
@@ -565,10 +559,10 @@ class MainActivity : AppCompatActivity() {
                     count++;
                     setTimeout(
                         limitedScroll,
-                        random(500, 1200) 
+                        random(1000, 1500) 
                     );
                 }
-                setTimeout(limitedScroll, random(600, 1200));
+                setTimeout(limitedScroll, random(1000, 1500));
             })();
             """.trimIndent()
         webView.evaluateJavascript(js, null)

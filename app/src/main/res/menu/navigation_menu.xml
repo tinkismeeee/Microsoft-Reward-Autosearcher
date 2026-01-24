@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_api_key"
+        android:title="API key" />
+    <item
+        android:id="@+id/nav_login"
+        android:title="Login" />
+    <item
+        android:id="@+id/nav_logout"
+        android:title="Logout" />
+</menu>
