@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "305464918321",
+    "project_id": "reward-autosearcher",
+    "storage_bucket": "reward-autosearcher.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:305464918321:android:53c1893a775e8123bab010",
+        "android_client_info": {
+          "package_name": "com.tinkismee.microsort_reward_autosearcher"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKiQTLSWuqTel1IMzsKSBUdPzfRj4YR5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

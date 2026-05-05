@@ -1,6 +1,7 @@
 # REWARD AUTOSEARCHER
 
 Reward Autosearcher is an Android application developed in Kotlin, designed to automate Bing searches to efficiently accumulate Microsoft Rewards points and save time.
+
 ## ✨ Key Features
 
 - Auto Search: Perform multiple automated search queries without manual interaction.
@@ -34,33 +35,126 @@ Reward Autosearcher is an Android application developed in Kotlin, designed to a
 
 ## 🛠️ Technologies Used
 
-| Technology    |Description|
-|---------------|---|
-| Language      |Kotlin|
-| Networking    |Retrofit & OkHttp|
-| JSON Parsing  |Kotlinx Serialization & Gson|
-| UI Components |Android Views (XML), Material Design|
-| Build System  |Gradle (Kotlin DSL)|
+| Technology    | Description                          |
+| ------------- | ------------------------------------ |
+| Language      | Kotlin                               |
+| Networking    | Retrofit & OkHttp                    |
+| JSON Parsing  | Kotlinx Serialization & Gson         |
+| UI Components | Android Views (XML), Material Design |
+| Build System  | Gradle (Kotlin DSL)                  |
 
 ## 📂 Project Structure
 
-*Important source files include:**
+\*Important source files include:\*\*
 
 - `MainActivity.kt`: Core logic, UI handling, and automation flow.
 
-- `RetrofitClient_getChromeVersion.kt`: API client configuration to fetch browser version data.
-
-- `localQueryDataClass.kt` & `chromeVersionResponse.kt`: Data classes modeling JSON data.
-
 - `assets/queries.json`: Offline keyword dataset.
 
-- `res/layout/activity_main.xml`: Main user interface layout.
+**🌳 Project tree:**
+
+```
+├── app
+│   ├── src
+│   │   ├── androidTest
+│   │   │   └── java
+│   │   │       └── com
+│   │   │           └── tinkismee
+│   │   │               └── microsort_reward_autosearcher
+│   │   │                   └── ExampleInstrumentedTest.kt
+│   │   ├── main
+│   │   │   ├── assets
+│   │   │   │   └── queries.json
+│   │   │   ├── java
+│   │   │   │   └── com
+│   │   │   │       └── tinkismee
+│   │   │   │           └── microsort_reward_autosearcher
+│   │   │   │               ├── API_getChromeVersion.kt
+│   │   │   │               ├── AutoSearchService.kt
+│   │   │   │               ├── MainActivity.kt
+│   │   │   │               ├── RetrofitClient_getChromeVersion.kt
+│   │   │   │               ├── chromeVersionResponse.kt
+│   │   │   │               └── localQueryDataClass.kt
+│   │   │   ├── res
+│   │   │   │   ├── drawable
+│   │   │   │   │   ├── bars.xml
+│   │   │   │   │   ├── ic_launcher_background.xml
+│   │   │   │   │   ├── ic_launcher_foreground.xml
+│   │   │   │   │   ├── login.xml
+│   │   │   │   │   ├── logout.xml
+│   │   │   │   │   ├── unitedstates.png
+│   │   │   │   │   └── vietnam.jpg
+│   │   │   │   ├── font
+│   │   │   │   │   └── cambo.ttf
+│   │   │   │   ├── layout
+│   │   │   │   │   └── activity_main.xml
+│   │   │   │   ├── menu
+│   │   │   │   │   └── navigation_menu.xml
+│   │   │   │   ├── mipmap-anydpi
+│   │   │   │   │   ├── ic_launcher.xml
+│   │   │   │   │   └── ic_launcher_round.xml
+│   │   │   │   ├── mipmap-hdpi
+│   │   │   │   │   ├── ic_launcher.webp
+│   │   │   │   │   └── ic_launcher_round.webp
+│   │   │   │   ├── mipmap-mdpi
+│   │   │   │   │   ├── ic_launcher.webp
+│   │   │   │   │   └── ic_launcher_round.webp
+│   │   │   │   ├── mipmap-xhdpi
+│   │   │   │   │   ├── ic_launcher.webp
+│   │   │   │   │   └── ic_launcher_round.webp
+│   │   │   │   ├── mipmap-xxhdpi
+│   │   │   │   │   ├── ic_launcher.webp
+│   │   │   │   │   └── ic_launcher_round.webp
+│   │   │   │   ├── mipmap-xxxhdpi
+│   │   │   │   │   ├── ic_launcher.webp
+│   │   │   │   │   └── ic_launcher_round.webp
+│   │   │   │   ├── values
+│   │   │   │   │   ├── colors.xml
+│   │   │   │   │   ├── strings.xml
+│   │   │   │   │   ├── style.xml
+│   │   │   │   │   └── themes.xml
+│   │   │   │   ├── values-night
+│   │   │   │   │   └── themes.xml
+│   │   │   │   ├── values-vi
+│   │   │   │   │   └── strings.xml
+│   │   │   │   └── xml
+│   │   │   │       ├── backup_rules.xml
+│   │   │   │       └── data_extraction_rules.xml
+│   │   │   └── AndroidManifest.xml
+│   │   └── test
+│   │       └── java
+│   │           └── com
+│   │               └── tinkismee
+│   │                   └── microsort_reward_autosearcher
+│   │                       └── ExampleUnitTest.kt
+│   └── proguard-rules.pro
+├── gradle
+│   ├── wrapper
+│   │   ├── gradle-wrapper.jar
+│   │   └── gradle-wrapper.properties
+│   └── libs.versions.toml
+├── .gitignore
+├── README.md
+├── README_en.md
+├── gradle.properties
+├── gradlew
+├── gradlew.bat
+└── settings.gradle.kts
+```
 
 ## 🚀 Installation & Usage
 
-### Requirements:
+### Install:
 
-- Android device running Android 9.0 or higher.
+- [` Microsoft-Reward-Autosearcher-v1.0.0.apk`](https://github.com/tinkismeeee/Microsoft-Reward-Autosearcher/releases/download/v1.0.0/Microsoft-Reward-Autosearcher-v1.0.0.apk)
+
+### Requirement:
+
+- A smartphone running the Android operating system (Android 9.0 or higher).
+
+### ⚠️ Note:
+
+- **This application was developed on Android 11. Newer Android versions may encounter unexpected issues that are outside the developer’s control.**
 
 ## Steps:
 
