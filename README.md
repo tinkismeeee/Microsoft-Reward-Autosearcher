@@ -39,6 +39,15 @@ Reward Autosearcher là một ứng dụng Android được phát triển bằng
 | UI Components | Android Views (XML), Material Design |
 | Build System  | Gradle (Kotlin DSL)                  |
 
+## 📷 Screenshot
+
+<p align="center">
+  <img src="demo1.jpg" width="700">
+</p>
+<p align="center">
+  <img src="demo2.jpg" width="700">
+</p>
+
 ## 📂 Cấu trúc dự án
 
 **Tệp tin chính:**

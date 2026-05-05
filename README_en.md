@@ -43,6 +43,15 @@ Reward Autosearcher is an Android application developed in Kotlin, designed to a
 | UI Components | Android Views (XML), Material Design |
 | Build System  | Gradle (Kotlin DSL)                  |
 
+## 📷 Screenshot
+
+<p align="center">
+  <img src="demo1.jpg" alt="Cambridge Page" width="700">
+</p>
+<p align="center">
+  <img src="demo2.jpg" alt="Cambridge Page" width="700">
+</p>
+
 ## 📂 Project Structure
 
 \*Important source files include:\*\*
