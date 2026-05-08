@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
                         handler.postDelayed({
                             waitingForSearch = true
                             startAutoSearch()
-                        }, delayCount * 1000L)
+                        }, delayCount * 1000L + 1000L)
                     }
                 }
             }
@@ -547,7 +547,7 @@ class MainActivity : AppCompatActivity() {
                 function random(min, max) {
                     return Math.floor(Math.random() * (max - min + 1)) + min;
                 }
-                let scrollTimes = random(0, 5);
+                let scrollTimes = random(0, 3);
                 let count = 0;
                 function limitedScroll() {
                     if (count >= scrollTimes) {
@@ -560,10 +560,10 @@ class MainActivity : AppCompatActivity() {
                     count++;
                     setTimeout(
                         limitedScroll,
-                        random(1000, 1500) 
+                        random(700, 1000) 
                     );
                 }
-                setTimeout(limitedScroll, random(1000, 1500));
+                setTimeout(limitedScroll, random(1000, 1200));
             })();
             """.trimIndent()
         webView.evaluateJavascript(js, null)
