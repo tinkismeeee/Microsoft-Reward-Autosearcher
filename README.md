@@ -42,10 +42,8 @@ Reward Autosearcher là một ứng dụng Android được phát triển bằng
 ## 📷 Screenshot
 
 <p align="center">
-  <img src="demo1.jpg" width="700">
-</p>
-<p align="center">
-  <img src="demo2.jpg" width="700">
+  <img src="demo1.jpg" width="250">
+  <img src="demo2.jpg" width="250">
 </p>
 
 ## 📂 Cấu trúc dự án
@@ -150,7 +148,7 @@ Reward Autosearcher là một ứng dụng Android được phát triển bằng
 
 **Hướng dẫn cài đặt**
 
-- Tải ngay tại release - v1.0.0 - [` Microsoft-Reward-Autosearcher-v1.0.0.apk`](https://github.com/tinkismeeee/Microsoft-Reward-Autosearcher/releases/download/v1.0.0/Microsoft-Reward-Autosearcher-v1.0.0.apk)
+- Tải ngay tại release - v1.1.0 - [` Microsoft-Reward-Autosearcher-v1.1.0.apk`](https://github.com/tinkismeeee/Microsoft-Reward-Autosearcher/releases/download/v1.1.0/Microsoft-Reward-Autosearcher-v1.1.0.apk)
 
 ### Yêu cầu:
 

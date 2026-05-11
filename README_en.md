@@ -46,10 +46,8 @@ Reward Autosearcher is an Android application developed in Kotlin, designed to a
 ## 📷 Screenshot
 
 <p align="center">
-  <img src="demo1.jpg" alt="Cambridge Page" width="700">
-</p>
-<p align="center">
-  <img src="demo2.jpg" alt="Cambridge Page" width="700">
+  <img src="demo1.jpg" width="250">
+  <img src="demo2.jpg" width="250">
 </p>
 
 ## 📂 Project Structure
@@ -155,7 +153,7 @@ Reward Autosearcher is an Android application developed in Kotlin, designed to a
 
 ### Install:
 
-- [` Microsoft-Reward-Autosearcher-v1.0.0.apk`](https://github.com/tinkismeeee/Microsoft-Reward-Autosearcher/releases/download/v1.0.0/Microsoft-Reward-Autosearcher-v1.0.0.apk)
+- [` Microsoft-Reward-Autosearcher-v1.1.0.apk`](https://github.com/tinkismeeee/Microsoft-Reward-Autosearcher/releases/download/v1.1.0/Microsoft-Reward-Autosearcher-v1.1.0.apk)
 
 ### Requirement:
 
