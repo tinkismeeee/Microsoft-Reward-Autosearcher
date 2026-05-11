@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var progressBar: android.widget.ProgressBar
     private lateinit var vietnam: ImageView
     private lateinit var unitedstates: ImageView
+    private var nextSearchRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,11 +97,10 @@ class MainActivity : AppCompatActivity() {
                         currentIndex++
                     }
                     url?.contains("bing.com/search") == true -> {
-                        ScrollJS()
-                        handler.postDelayed({
-                            waitingForSearch = true
-                            startAutoSearch()
-                        }, delayCount * 1000L + 1000L)
+                        if (nextSearchRunnable == null) {
+                            ScrollJS()
+                            scheduleNextSearch()
+                        }
                     }
                 }
             }
@@ -168,6 +168,10 @@ class MainActivity : AppCompatActivity() {
             if (isRunning) {
                 isRunning = false
                 handler.removeCallbacks(searchRunnable)
+                nextSearchRunnable?.let {
+                    handler.removeCallbacks(it)
+                }
+                nextSearchRunnable = null
                 startBtn.text = getString(R.string.startBtn_description)
                 statusTextView.text = "0/0"
                 progressBar.progress = 0
@@ -240,6 +244,27 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun scheduleNextSearch() {
+        nextSearchRunnable?.let {
+            handler.removeCallbacks(it)
+        }
+        val delayMs = delayCount * 1000L + 500L
+        Log.d("DEBUG_DELAY", "Scheduling next search after $delayMs ms")
+        nextSearchRunnable = Runnable {
+            nextSearchRunnable = null
+            if (!isRunning) {
+                return@Runnable
+            }
+            Log.d("DEBUG_DELAY", "Running next search now")
+            waitingForSearch = true
+            startAutoSearch()
+        }
+        handler.postDelayed(
+            nextSearchRunnable!!,
+            delayCount * 1000L + 1000L
+        )
+    }
+
     private fun searchLikeRealUser(query: String) {
         val safe = query
             .replace("\\", "\\\\")
@@ -263,15 +288,17 @@ class MainActivity : AppCompatActivity() {
                         i++;
                         setTimeout(typeChar, 20 + Math.random() * 15);
                     } else {
-                        input.dispatchEvent(
-                            new KeyboardEvent('keydown', {
-                                bubbles: true,
-                                cancelable: true,
-                                key: 'Enter',
-                                code: 'Enter',
-                                keyCode: 13
-                            })
-                        );
+                        setTimeout(() => {
+                            input.dispatchEvent(
+                                new KeyboardEvent('keydown', {
+                                    bubbles: true,
+                                    cancelable: true,
+                                    key: 'Enter',
+                                    code: 'Enter',
+                                    keyCode: 13
+                                })
+                            );
+                        }, 300);
                     }
                 }
                 typeChar();
@@ -547,7 +574,7 @@ class MainActivity : AppCompatActivity() {
                 function random(min, max) {
                     return Math.floor(Math.random() * (max - min + 1)) + min;
                 }
-                let scrollTimes = random(0, 3);
+                let scrollTimes = random(1, 4);
                 let count = 0;
                 function limitedScroll() {
                     if (count >= scrollTimes) {
